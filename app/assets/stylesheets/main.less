@@ -1,0 +1,26 @@
+@primary-color: #00F0F0;
+@background: grey;
+
+@message-padding: 5px;
+@message-border-width: 2px;
+
+body {
+    background: @background;
+    color: @primary-color;
+}
+
+.error {
+    background: #EEB4B4;
+    color: red;
+    border-style: solid;
+    border-width: @message-border-width;
+    padding: @message-padding;
+}
+
+.success {
+    background: #B4EEB4;
+    color: green;
+    border-style: solid;
+    border-width: @message-border-width;
+    padding: @message-padding;
+}
