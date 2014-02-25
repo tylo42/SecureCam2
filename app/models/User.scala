@@ -6,7 +6,7 @@ import anorm.SqlParser._
 import anorm.~
 import play.api.Play.current
 
-case class User(id: Long, userName: String, password: String)
+case class User(userName: String, password: String)
 
 object User {
   def all(): List[User] = DB.withConnection {
@@ -23,19 +23,18 @@ object User {
     }
   }
 
-  def delete(id: Long) {
+  def delete(username: String) {
     DB.withConnection { implicit c =>
-      SQL("delete from user where user_id = {id}").on(
-        'id -> id
+      SQL("delete from user where username = {username}").on(
+        'username -> username
       ).executeUpdate()
     }
   }
 
   val user = {
-    get[Long]("user_id") ~
     get[String]("username") ~
     get[String]("password") map {
-      case id~username~password => User(id, username, password)
+      case username~password => User(username, password)
     }
   }
 

@@ -8,7 +8,7 @@ GET     /                           controllers.Application.index
 # User pages
 GET     /users                      controllers.UserController.users
 POST    /users                      controllers.UserController.newUser
-POST    /users/:id/delete           controllers.UserController.deleteUser(id: Long)
+POST    /users/:id/delete           controllers.UserController.deleteUser(id: String)
 
 # Authentication
 GET     /login                      controllers.Auth.login

@@ -29,8 +29,8 @@ object UserController extends Controller {
       )
   }
 
-  def deleteUser(id: Long) = Action {
-    User.delete(id)
+  def deleteUser(username: String) = Action {
+    User.delete(username)
     Redirect(routes.UserController.users)
   }
 }

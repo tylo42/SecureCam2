@@ -28,10 +28,9 @@ ALTER TABLE video ADD CONSTRAINT RefCam
     REFERENCES camera(camera_id);
 
 CREATE TABLE User (
-    user_id  INT UNSIGNED NOT NULL AUTO_INCREMENT,
     username varchar(255) NOT NULL,
     password varchar(255) NOT NULL,
-    PRIMARY KEY(user_id)
+    PRIMARY KEY(username)
 );
 
 # --- !Downs
