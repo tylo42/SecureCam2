@@ -1,4 +1,4 @@
-@(users: List[User], userForm: Form[Tuple3[String, String, String]])
+@(users: List[User], userForm: Form[UserRegistration])
 
 @import helper._
 
@@ -20,6 +20,10 @@
     </ul>
 
     <h2>Add a new User</h2>
+
+    @userForm.globalError.map { error =>
+        <dd class="error">@error.message</dd>
+    }
 
     @form(routes.UserController.newUser) {
         @inputText(userForm("Username"))

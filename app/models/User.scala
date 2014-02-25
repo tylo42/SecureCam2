@@ -13,12 +13,12 @@ object User {
     implicit c => SQL("select * from user").as(user *)
   }
 
-  def create(userName: String, password: String) {
+  def create(user: User) {
     DB.withConnection {
       implicit c =>
         SQL("insert into user (username, password) values ({username}, {password})").on(
-          'username -> userName,
-          'password -> password
+          'username -> user.userName,
+          'password -> user.password
         ).executeUpdate()
     }
   }
