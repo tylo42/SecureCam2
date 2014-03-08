@@ -10,7 +10,7 @@
         @nodeCameras.map { node =>
         <dt>@node.node.hostname</dt>
             @node.cameras.map { camera =>
-                <dd>@camera.description</dd>
+                <dd><a href='@routes.CameraController.camera(camera.camera_id)'>@camera.description</a></dd>
             }
         }
     </dl>

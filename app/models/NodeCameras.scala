@@ -11,7 +11,7 @@ object NodeCameras {
       NodeCameras(Node(2, "node1"),
         List(
           Camera(2, 50506, "Back door", 2),
-          Camera(3, 50505, "Living room", 2)
+          Camera(3, 50505, "Living room", 3)
         )
       )
     )

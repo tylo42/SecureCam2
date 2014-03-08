@@ -1,0 +1,14 @@
+@(camera: Camera, node: Node)
+
+@import helper._
+
+@main("Camera @camera.camera_id") {
+
+<h1>Camera @camera.camera_id</h1>
+
+<dl>
+    <dt>@camera.description</dt>
+    <dd>@node.hostname:@camera.port</dd>
+</dl>
+
+}
