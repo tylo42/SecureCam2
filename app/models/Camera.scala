@@ -1,13 +1,14 @@
 package models
 
-case class Camera(camera_id: Int, hostname: String, port: Int, description: String)
+case class Camera(camera_id: Int, port: Int, description: String, node_id: Int)
 
 object Camera {
   def all(): List[Camera] = {
     // dummy data
     List(
-      Camera(1, "localhost", 50505, "Front door"),
-      Camera(2, "localhost", 50506, "Back door"))
+      Camera(1, 50505, "Front door", 1),
+      Camera(2, 50506, "Back door", 1)
+    )
   }
 
 }

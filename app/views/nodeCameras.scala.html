@@ -1,0 +1,17 @@
+@(nodeCameras: List[NodeCameras])
+
+@import helper._
+
+@main("Cameras") {
+
+<h1>@nodeCameras.size computer nodes(s)</h1>
+
+    <dl>
+        @nodeCameras.map { node =>
+        <dt>@node.node.hostname</dt>
+            @node.cameras.map { camera =>
+                <dd>@camera.description</dd>
+            }
+        }
+    </dl>
+}
