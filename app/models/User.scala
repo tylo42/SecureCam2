@@ -6,7 +6,7 @@ import anorm.SqlParser._
 import anorm.~
 import play.api.Play.current
 
-case class User(userName: String, password: String)
+case class User(userName: String, password: String, salt: String)
 
 object User {
   def all(): List[User] = DB.withConnection {
@@ -16,9 +16,10 @@ object User {
   def create(user: User) {
     DB.withConnection {
       implicit c =>
-        SQL("insert into user (username, password) values ({username}, {password})").on(
+        SQL("insert into user (username, password, salt) values ({username}, {password}, {salt})").on(
           'username -> user.userName,
-          'password -> user.password
+          'password -> user.password,
+          'salt -> user.salt
         ).executeUpdate()
     }
   }
@@ -33,8 +34,9 @@ object User {
 
   val user = {
     get[String]("username") ~
-    get[String]("password") map {
-      case username~password => User(username, password)
+    get[String]("password") ~
+    get[String]("salt") map {
+      case username~password~salt => User(username, password, salt)
     }
   }
 

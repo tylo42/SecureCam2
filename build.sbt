@@ -6,7 +6,9 @@ libraryDependencies ++= Seq(
   jdbc,
   anorm,
   cache
-)     
+)
+
+libraryDependencies += "io.github.nremond" %% "pbkdf2-scala" % "0.2"
 
 scalacOptions ++= Seq("-feature", "-language:postfixOps")
 

@@ -11,6 +11,7 @@
         <li>
             @user.userName
             @user.password
+            @user.salt
 
             @form(routes.UserController.deleteUser(user.userName)) {
             <input type="submit" value="Delete">
