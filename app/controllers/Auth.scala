@@ -18,7 +18,7 @@ object Auth extends Controller {
   )
 
   def check(username: String, password: String): Boolean = {
-    User.getUser(username) match {
+    User.get(username) match {
       case None => false
       case Some(user) => user.password == PBKDF2(password, user.salt)
     }
