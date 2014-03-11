@@ -13,23 +13,28 @@ object User {
     implicit c => SQL("select * from user").as(user *)
   }
 
-  def create(user: User) {
-    DB.withConnection {
-      implicit c =>
-        SQL("insert into user (username, password, salt) values ({username}, {password}, {salt})").on(
-          'username -> user.userName,
-          'password -> user.password,
-          'salt -> user.salt
-        ).executeUpdate()
-    }
+  def create(user: User): Unit = DB.withConnection {
+    implicit c =>
+      SQL("insert into user (username, password, salt) values ({username}, {password}, {salt})").on(
+        'username -> user.userName,
+        'password -> user.password,
+        'salt -> user.salt
+      ).executeUpdate()
   }
 
-  def delete(username: String) {
-    DB.withConnection { implicit c =>
-      SQL("delete from user where username = {username}").on(
-        'username -> username
-      ).executeUpdate()
-    }
+  def getUser(username: String): Option[User] = DB.withConnection {
+    implicit c =>
+      SQL("select * from user where username = {username}").on(
+        'username -> username).as(user *) match {
+        case Nil => None
+        case l => Some(l.head)
+      }
+  }
+
+  def delete(username: String): Unit = DB.withConnection { implicit c =>
+    SQL("delete from user where username = {username}").on(
+      'username -> username
+    ).executeUpdate()
   }
 
   val user = {

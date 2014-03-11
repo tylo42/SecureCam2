@@ -35,7 +35,6 @@ object UserController extends Controller {
       )
   }
 
-
   def deleteUser(username: String) = Action {
     User.delete(username)
     Redirect(routes.UserController.users)
