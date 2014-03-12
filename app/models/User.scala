@@ -24,6 +24,8 @@ object User {
     implicit c => SQL("select * from user order by username asc").as(usersParser)
   }
 
+  def isEmpty(): Boolean = all().isEmpty
+
   def get(username: String): Option[User] = DB.withConnection {
     implicit c =>
       SQL("select * from user where username = {username}").on(
@@ -32,6 +34,8 @@ object User {
         case l => Some(l.head)
       }
   }
+
+  def exists(username: String): Boolean = get(username).isDefined
 
   def create(user: User): Unit = DB.withConnection {
     implicit c =>

@@ -5,10 +5,14 @@
 # Home page
 GET     /                           controllers.Application.index
 
+# Installation
+GET     /install                    controllers.InstallationController.install
+POST    /install                    controllers.InstallationController.firstUser
+
 # Authentication
-GET     /login                      controllers.Auth.login
-POST    /login                      controllers.Auth.authenticate
-GET     /logout                     controllers.Auth.logout
+GET     /login                      controllers.Authentication.login
+POST    /login                      controllers.Authentication.authenticate
+GET     /logout                     controllers.Authentication.logout
 
 # User
 GET     /users                      controllers.UserController.users

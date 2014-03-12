@@ -1,13 +1,13 @@
 package controllers
 
 import play.api.mvc._
-import play.api.data._
+import play.api.data.Form
 import play.api.data.Forms._
 
 import models.User
 import io.github.nremond.PBKDF2
 
-object Auth extends Controller {
+object Authentication extends Controller {
   val loginForm = Form(
     tuple(
       "username" -> text,
@@ -26,43 +26,43 @@ object Auth extends Controller {
   }
 
   def login = Action { implicit request =>
-    Ok(views.html.login(loginForm))
+    if(User.isEmpty()) {
+      Redirect(routes.InstallationController.install())
+    } else {
+      Ok(views.html.login(loginForm))
+    }
   }
 
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.login(formWithErrors)),
-      user => Redirect(routes.Application.index).withSession(Security.username -> user._1)
+      user => Redirect(routes.Application.index()).withSession(Security.username -> user._1)
     )
   }
 
   def logout = Action {
-    Redirect(routes.Auth.login).withNewSession.flashing(
+    Redirect(routes.Authentication.login()).withNewSession.flashing(
       "success" -> "You are now logged out."
     )
   }
 
   trait Secured {
 
-    def username(request: RequestHeader) = request.session.get(Security.username)
+    def username(request: RequestHeader): Option[String] = {
+      request.session.get(Security.username).flatMap{ username =>
+        if(User.exists(username)) { Some(username) } else { None }
+      }
+    }
 
-    def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Auth.login)
+    def onUnauthorized(request: RequestHeader) = {
+      Results.Redirect(routes.Authentication.login())
+    }
 
     def withAuth(f: => String => Request[AnyContent] => Result) = {
       Security.Authenticated(username, onUnauthorized) { user =>
         Action(request => f(user)(request))
       }
     }
-
-    /**
-     * This method shows how you could wrap the withAuth method to also fetch your user
-     * You will need to implement UserDAO.findOneByUsername
-     */
-    //def withUser(f: User => Request[AnyContent] => Result) = withAuth { username => implicit request =>
-    //  UserDAO.findOneByUsername(username).map { user =>
-    //    f(user)(request)
-    //  }.getOrElse(onUnauthorized(request))
-    //}
   }
 
 

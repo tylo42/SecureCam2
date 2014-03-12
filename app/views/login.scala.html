@@ -2,9 +2,9 @@
 
 @import helper._
 
-@main("Login") {
+@main("Login", None) {
 
-    @form(routes.Auth.authenticate) {
+    @form(routes.Authentication.authenticate) {
         <h1>Sign in</h1>
 
         @loginForm.globalError.map { error =>

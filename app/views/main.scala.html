@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String, username: Option[String])(content: Html)
 
 @import helper._
 
@@ -18,7 +18,11 @@
 
         @content
 
-    <a href="@routes.Auth.logout">Logout</a>
+    <p></p>
+
+    @if(username.isDefined) {
+        <a href="@routes.Authentication.logout">Logout</a>
+    }
 
     </body>
 </html>

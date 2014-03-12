@@ -1,7 +1,5 @@
 package models
 
-import models.Camera
-
 case class Camera(camera_id: Long, port: Long, description: String, node_id: Long)
 
 object Camera {
