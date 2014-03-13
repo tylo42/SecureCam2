@@ -13,12 +13,18 @@ object InstallationController extends Controller {
   }
 
   def firstUser = Action { implicit request =>
-    UserController.userForm.bindFromRequest().fold(
-      errors => BadRequest(views.html.install(errors)),
-      value => {
-        UserController.createUser(value)
-        Redirect(routes.Application.index()).withSession(Security.username -> value.username)
+    this.synchronized {
+      if(!User.isEmpty()) {
+        Redirect(routes.Application.index())
+      } else {
+        UserController.userForm.bindFromRequest().fold(
+          errors => BadRequest(views.html.install(errors)),
+          value => {
+            UserController.createUser(value)
+            Redirect(routes.Application.index()).withSession(Security.username -> value.username)
+          }
+        )
       }
-    )
+    }
   }
 }
