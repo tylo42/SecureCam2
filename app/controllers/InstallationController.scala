@@ -1,11 +1,11 @@
 package controllers
 
 import play.api.mvc._
-import models.User
+import models.{UserService, ConcreteUserService}
 
-object InstallationController extends Controller {
+class InstallationController(userService: UserService) extends Controller {
   def install = Action {
-    if(!User.all().isEmpty) {
+    if(!userService.isEmpty) {
       Redirect(routes.Application.index())
     } else {
       Ok(views.html.install(UserController.userForm))
@@ -14,13 +14,13 @@ object InstallationController extends Controller {
 
   def firstUser = Action { implicit request =>
     this.synchronized {
-      if(!User.isEmpty) {
+      if(!userService.isEmpty) {
         Redirect(routes.Application.index())
       } else {
         UserController.userForm.bindFromRequest().fold(
           errors => BadRequest(views.html.install(errors)),
           value => {
-            UserController.createUser(value)
+            new UserController(userService).createUser(value) // TODO: Move this methods implementation to a new class
             Redirect(routes.Application.index()).withSession(Security.username -> value.username)
           }
         )
@@ -28,3 +28,5 @@ object InstallationController extends Controller {
     }
   }
 }
+
+object InstallationController extends InstallationController(new ConcreteUserService()) {}

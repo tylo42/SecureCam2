@@ -4,10 +4,10 @@ import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
 
-import models.User
+import models.{ConcreteUserService, UserService, User}
 import io.github.nremond.PBKDF2
 
-object Authentication extends Controller {
+class Authentication(userService: UserService) extends Controller {
   val loginForm = Form(
     tuple(
       "username" -> text,
@@ -18,7 +18,7 @@ object Authentication extends Controller {
   )
 
   def check(username: String, password: String): Boolean = {
-    User.get(username) match {
+    userService.get(username) match {
       case None => false
       case Some(user) => user.password == PBKDF2(password, user.salt)
     }
@@ -26,7 +26,7 @@ object Authentication extends Controller {
   }
 
   def login = Action { implicit request =>
-    if(User.isEmpty) {
+    if(userService.isEmpty) {
       Redirect(routes.InstallationController.install())
     } else {
       Ok(views.html.login(loginForm))
@@ -50,7 +50,7 @@ object Authentication extends Controller {
 
     def username(request: RequestHeader): Option[String] = {
       request.session.get(Security.username).flatMap{ username =>
-        if(User.exists(username)) { Some(username) } else { None }
+        if(userService.exists(username)) { Some(username) } else { None }
       }
     }
 
@@ -64,6 +64,6 @@ object Authentication extends Controller {
       }
     }
   }
-
-
 }
+
+object Authentication extends Authentication(new ConcreteUserService()) {}

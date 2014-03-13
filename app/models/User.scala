@@ -8,7 +8,16 @@ import play.api.Play.current
 
 case class User(userName: String, password: String, salt: String)
 
-object User {
+trait UserService {
+  def all(): List[User]
+  def isEmpty: Boolean
+  def get(username: String): Option[User]
+  def exists(username: String): Boolean
+  def create(user: User): Unit
+  def delete(username: String): Unit
+}
+
+class ConcreteUserService extends UserService {
   private val userParser: RowParser[User] = {
     str("username") ~
     str("password") ~
@@ -18,7 +27,6 @@ object User {
   }
 
   private val usersParser: ResultSetParser[List[User]] = userParser.*
-
 
   def all(): List[User] = DB.withConnection {
     implicit c => SQL("select * from user order by username asc").as(usersParser)
