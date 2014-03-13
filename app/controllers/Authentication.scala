@@ -26,7 +26,7 @@ object Authentication extends Controller {
   }
 
   def login = Action { implicit request =>
-    if(User.isEmpty()) {
+    if(User.isEmpty) {
       Redirect(routes.InstallationController.install())
     } else {
       Ok(views.html.login(loginForm))

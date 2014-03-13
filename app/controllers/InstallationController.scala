@@ -14,7 +14,7 @@ object InstallationController extends Controller {
 
   def firstUser = Action { implicit request =>
     this.synchronized {
-      if(!User.isEmpty()) {
+      if(!User.isEmpty) {
         Redirect(routes.Application.index())
       } else {
         UserController.userForm.bindFromRequest().fold(

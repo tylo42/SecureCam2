@@ -17,14 +17,14 @@ object User {
     }
   }
 
-  private val usersParser: ResultSetParser[List[User]] = userParser *
+  private val usersParser: ResultSetParser[List[User]] = userParser.*
 
 
   def all(): List[User] = DB.withConnection {
     implicit c => SQL("select * from user order by username asc").as(usersParser)
   }
 
-  def isEmpty(): Boolean = all().isEmpty
+  def isEmpty: Boolean = all().isEmpty
 
   def get(username: String): Option[User] = DB.withConnection {
     implicit c =>
