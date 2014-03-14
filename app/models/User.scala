@@ -6,7 +6,7 @@ import anorm.SqlParser._
 import anorm.~
 import play.api.Play.current
 
-case class User(userName: String, password: String, salt: String)
+case class User(username: String, password: String, salt: String)
 
 trait UserService {
   def all(): List[User]
@@ -48,7 +48,7 @@ class ConcreteUserService extends UserService {
   def create(user: User): Unit = DB.withConnection {
     implicit c =>
       SQL("insert into user (username, password, salt) values ({username}, {password}, {salt})").on(
-        'username -> user.userName,
+        'username -> user.username,
         'password -> user.password,
         'salt -> user.salt
       ).executeUpdate()

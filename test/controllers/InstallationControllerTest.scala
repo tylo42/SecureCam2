@@ -9,8 +9,9 @@ import models.{User, UserService}
 
 class InstallationControllerTest extends Specification with Mockito {
   val userService = mock[UserService]
+  val userFactory = mock[UserFactory]
 
-  val testObject = new InstallationController(userService)
+  val testObject = new InstallationController(userService, userFactory)
 
   "Installation controller install" should {
     "redirect home" in {
@@ -52,6 +53,8 @@ class InstallationControllerTest extends Specification with Mockito {
       val result = testObject.firstUser()(FakeRequest())
 
       status(result) must equalTo(BAD_REQUEST)
+
+      there was no(userService).create(any[User])
     }
 
     "short username" in new WithApplication {
@@ -64,6 +67,8 @@ class InstallationControllerTest extends Specification with Mockito {
       ))
 
       status(result) must equalTo(BAD_REQUEST)
+
+      there was no(userService).create(any[User])
     }
 
     "passwords to not match" in new WithApplication {
@@ -76,10 +81,14 @@ class InstallationControllerTest extends Specification with Mockito {
       ))
 
       status(result) must equalTo(BAD_REQUEST)
+
+      there was no(userService).create(any[User])
     }
 
     "create first user" in new WithApplication {
+      val resultUser = User("user", "hashed password", "salt")
       userService.isEmpty returns true
+      userFactory.apply("user", "password") returns resultUser
 
       val result = testObject.firstUser()(FakeRequest(POST, "post").withFormUrlEncodedBody(
         "Username" -> "user",
@@ -90,7 +99,7 @@ class InstallationControllerTest extends Specification with Mockito {
       status(result) must equalTo(SEE_OTHER)
       redirectLocation(result) must beSome("/")
 
-      there was one(userService).create(any[User]) // TODO: Allow for mocking hashing
+      there was one(userService).create(resultUser)
     }
   }
 }

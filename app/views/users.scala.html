@@ -9,11 +9,11 @@
     <ul>
         @users.map { user =>
         <li>
-            @user.userName
+            @user.username
             @user.password
             @user.salt
 
-            @form(routes.UserController.deleteUser(user.userName)) {
+            @form(routes.UserController.deleteUser(user.username)) {
             <input type="submit" value="Delete">
             }
         </li>

@@ -9,7 +9,7 @@ import controllers.Authentication.Secured
 
 case class UserRegistration(username: String, password: String, confirmPassword: String)
 
-class UserController(userService: UserService) extends Controller with Secured {
+class UserController(userService: UserService, userFactory: UserFactory) extends Controller with Secured {
   val userForm = Form(
     mapping(
       "Username" -> text(minLength = 3, maxLength = 255),
@@ -34,9 +34,7 @@ class UserController(userService: UserService) extends Controller with Secured {
   }
 
   def createUser(value: UserRegistration) = {
-    val salt = RandomStringGenerator(64)
-    val password = PBKDF2(value.password, salt)
-    userService.create(User(value.username, password, salt))
+    userService.create(userFactory(value.username, value.password))
   }
 
   def deleteUser(username: String) = Action {
@@ -45,4 +43,4 @@ class UserController(userService: UserService) extends Controller with Secured {
   }
 }
 
-object UserController extends UserController(new ConcreteUserService()) {}
+object UserController extends UserController(new ConcreteUserService(), new ConcreteUserFactory()) {}
