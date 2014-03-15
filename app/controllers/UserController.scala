@@ -3,7 +3,7 @@ package controllers
 import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
-import models.{ConcreteUserService, UserService, User}
+import models.{ConcreteRoleService, ConcreteUserService, UserService, User}
 import io.github.nremond.PBKDF2
 import controllers.Authentication.Secured
 
@@ -34,7 +34,7 @@ class UserController(userService: UserService, userFactory: UserFactory) extends
   }
 
   def createUser(value: UserRegistration) = {
-    userService.create(userFactory(value.username, value.password))
+    userService.create(userFactory(value.username, value.password, "admin"))
   }
 
   def deleteUser(username: String) = Action {
@@ -43,4 +43,4 @@ class UserController(userService: UserService, userFactory: UserFactory) extends
   }
 }
 
-object UserController extends UserController(new ConcreteUserService(), new ConcreteUserFactory()) {}
+object UserController extends UserController(new ConcreteUserService(), new ConcreteUserFactory(new ConcreteRoleService)) {}

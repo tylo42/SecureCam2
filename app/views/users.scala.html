@@ -12,6 +12,7 @@
             @user.username
             @user.password
             @user.salt
+            @user.role_id
 
             @form(routes.UserController.deleteUser(user.username)) {
             <input type="submit" value="Delete">

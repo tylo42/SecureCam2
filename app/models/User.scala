@@ -6,7 +6,7 @@ import anorm.SqlParser._
 import anorm.~
 import play.api.Play.current
 
-case class User(username: String, password: String, salt: String)
+case class User(username: String, password: String, salt: String, role_id: Long)
 
 trait UserService {
   def all(): List[User]
@@ -21,8 +21,9 @@ class ConcreteUserService extends UserService {
   private val userParser: RowParser[User] = {
     str("username") ~
     str("password") ~
-    str("salt") map {
-      case username~password~salt => User(username, password, salt)
+    str("salt") ~
+    long("role_id") map {
+      case username~password~salt~role_id => User(username, password, salt, role_id)
     }
   }
 
@@ -47,10 +48,11 @@ class ConcreteUserService extends UserService {
 
   def create(user: User): Unit = DB.withConnection {
     implicit c =>
-      SQL("insert into user (username, password, salt) values ({username}, {password}, {salt})").on(
+      SQL("insert into user (username, password, salt, role_id) values ({username}, {password}, {salt}, {role_id})").on(
         'username -> user.username,
         'password -> user.password,
-        'salt -> user.salt
+        'salt -> user.salt,
+        'role_id -> user.role_id
       ).executeUpdate()
   }
 

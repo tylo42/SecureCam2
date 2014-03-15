@@ -1,7 +1,7 @@
 package controllers
 
 import play.api.mvc._
-import models.{UserService, ConcreteUserService}
+import models.{ConcreteRoleService, UserService, ConcreteUserService}
 
 class InstallationController(userService: UserService, userFactory: UserFactory) extends Controller {
   def install = Action {
@@ -20,7 +20,7 @@ class InstallationController(userService: UserService, userFactory: UserFactory)
         UserController.userForm.bindFromRequest().fold(
           errors => BadRequest(views.html.install(errors)),
           value => {
-            userService.create(userFactory(value.username, value.password))
+            userService.create(userFactory(value.username, value.password, "super"))
             Redirect(routes.Application.index()).withSession(Security.username -> value.username)
           }
         )
@@ -29,4 +29,4 @@ class InstallationController(userService: UserService, userFactory: UserFactory)
   }
 }
 
-object InstallationController extends InstallationController(new ConcreteUserService(), new ConcreteUserFactory()) {}
+object InstallationController extends InstallationController(new ConcreteUserService(), new ConcreteUserFactory(new ConcreteRoleService())) {}
