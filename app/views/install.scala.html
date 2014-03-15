@@ -2,7 +2,7 @@
 
 @import helper._
 
-@main("Users", None) {
+@main("Installation", None) {
 
 <h2>Create first user</h2>
 
@@ -11,7 +11,7 @@
 }
 
 @form(routes.InstallationController.firstUser) {
-@inputText(userForm("Username"))
+@inputText(userForm("Username"), 'readonly -> "readonly")
 @inputPassword(userForm("Password"))
 @inputPassword(userForm("Confirm password"))
 <input type="submit" value="Create">

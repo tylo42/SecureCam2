@@ -12,7 +12,7 @@ case class UserRegistration(username: String, password: String, confirmPassword:
 class UserController(userService: UserService, userFactory: UserFactory) extends Controller with Secured {
   val userForm = Form(
     mapping(
-      "Username" -> text(minLength = 3, maxLength = 255),
+      "Username" -> text(minLength = 3, maxLength = 32),
       "Password" -> text(minLength = 6),
       "Confirm password" -> text(minLength = 6)
     )(UserRegistration.apply)(UserRegistration.unapply).verifying(

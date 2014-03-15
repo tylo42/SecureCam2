@@ -8,7 +8,7 @@ class InstallationController(userService: UserService, userFactory: UserFactory)
     if(!userService.isEmpty) {
       Redirect(routes.Application.index())
     } else {
-      Ok(views.html.install(UserController.userForm))
+      Ok(views.html.install(UserController.userForm.fill(UserRegistration("admin", "", ""))))
     }
   }
 
