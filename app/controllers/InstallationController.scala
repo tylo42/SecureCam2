@@ -29,4 +29,4 @@ class InstallationController(userService: UserService, userFactory: UserFactory)
   }
 }
 
-object InstallationController extends InstallationController(new ConcreteUserService(), new ConcreteUserFactory(new ConcreteRoleService())) {}
+object InstallationController extends InstallationController(new ConcreteUserService(new ConcreteRoleService), new ConcreteUserFactory(new ConcreteRoleService())) {}

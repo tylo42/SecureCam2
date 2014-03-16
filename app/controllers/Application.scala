@@ -6,7 +6,7 @@ import controllers.Authentication.Secured
 
 object Application extends Controller with Secured {
 
-  def index = withAuth { username => implicit request =>
+  def index = isAuthenticated { username => implicit request =>
     Ok(views.html.main("title", Some(username))(Html("<p>test</p>")))
   }
 }

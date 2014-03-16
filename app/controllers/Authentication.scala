@@ -4,7 +4,7 @@ import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
 
-import models.{ConcreteUserService, UserService, User}
+import models.{ConcreteRoleService, ConcreteUserService, UserService, User}
 import io.github.nremond.PBKDF2
 
 class Authentication(userService: UserService) extends Controller {
@@ -58,12 +58,28 @@ class Authentication(userService: UserService) extends Controller {
       Results.Redirect(routes.Authentication.login())
     }
 
-    def withAuth(f: => String => Request[AnyContent] => Result) = {
+    def isAuthenticated(f: => String => Request[AnyContent] => Result) = {
       Security.Authenticated(username, onUnauthorized) { user =>
         Action(request => f(user)(request))
+      }
+    }
+
+    def isAdmin(f: => String => Request[AnyContent] => Result) = hasPrivileges(f){
+      user => userService.isSuper(user)
+    }
+
+    def isSuper(f: => String => Request[AnyContent] => Result) = hasPrivileges(f){
+      user => userService.isAdmin(user)
+    }
+
+    private def hasPrivileges(f: => String => Request[AnyContent] => Result)(g: String => Boolean) = isAuthenticated { user => request =>
+      if(g(user)) {
+        f(user)(request)
+      } else {
+        Forbidden
       }
     }
   }
 }
 
-object Authentication extends Authentication(new ConcreteUserService()) {}
+object Authentication extends Authentication(new ConcreteUserService(new ConcreteRoleService())) {}

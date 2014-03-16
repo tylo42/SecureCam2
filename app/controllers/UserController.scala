@@ -3,8 +3,7 @@ package controllers
 import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
-import models.{ConcreteRoleService, ConcreteUserService, UserService, User}
-import io.github.nremond.PBKDF2
+import models.{ConcreteRoleService, ConcreteUserService, UserService}
 import controllers.Authentication.Secured
 
 case class UserRegistration(username: String, password: String, confirmPassword: String)
@@ -19,11 +18,11 @@ class UserController(userService: UserService, userFactory: UserFactory) extends
         "Passwords must match", user => user.password == user.confirmPassword)
   )
 
-  def users = withAuth { username => implicit request =>
+  def users = isAuthenticated { username => implicit request =>
     Ok(views.html.users(Some(username), userService.all(), userForm))
   }
 
-  def newUser = withAuth { username => implicit request =>
+  def newUser = isAuthenticated { username => implicit request =>
       userForm.bindFromRequest().fold(
         errors => BadRequest(views.html.users(Some(username), userService.all(), errors)),
         value => {
@@ -43,4 +42,4 @@ class UserController(userService: UserService, userFactory: UserFactory) extends
   }
 }
 
-object UserController extends UserController(new ConcreteUserService(), new ConcreteUserFactory(new ConcreteRoleService)) {}
+object UserController extends UserController(new ConcreteUserService(new ConcreteRoleService), new ConcreteUserFactory(new ConcreteRoleService)) {}

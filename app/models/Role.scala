@@ -10,6 +10,7 @@ case class Role(id: Long, name: String)
 
 trait RoleService {
   def getId(name: String): Option[Long]
+  def getName(id: Long): Option[String]
 }
 
 class ConcreteRoleService extends RoleService {
@@ -28,6 +29,15 @@ class ConcreteRoleService extends RoleService {
     ).as(rolesParser) match {
       case Nil => None
       case l => Some(l.head.id)
+    }
+  }
+
+  def getName(id: Long): Option[String] = DB.withConnection {
+    implicit c => SQL("select * from role where id = {id}").on(
+      'id -> id
+    ).as(rolesParser) match {
+      case Nil => None
+      case l => Some(l.head.name)
     }
   }
 }
