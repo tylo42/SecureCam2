@@ -31,6 +31,7 @@
         @inputText(userForm("Username"))
         @inputPassword(userForm("Password"))
         @inputPassword(userForm("Confirm password"))
+        @select(userForm("Role"), options(("view", "View"), ("admin", "Admin")))
         <input type="submit" value="Create">
     }
 }

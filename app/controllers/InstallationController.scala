@@ -8,7 +8,7 @@ class InstallationController(userService: UserService, userFactory: UserFactory)
     if(!userService.isEmpty) {
       Redirect(routes.Application.index())
     } else {
-      Ok(views.html.install(UserController.userForm.fill(UserRegistration("admin", "", ""))))
+      Ok(views.html.install(UserController.userForm.fill(UserRegistration("admin", "", "", None))))
     }
   }
 
@@ -20,7 +20,7 @@ class InstallationController(userService: UserService, userFactory: UserFactory)
         UserController.userForm.bindFromRequest().fold(
           errors => BadRequest(views.html.install(errors)),
           value => {
-            userService.create(userFactory(value.username, value.password, "super"))
+            userService.create(userFactory("admin", value.password, "super"))
             Redirect(routes.Application.index()).withSession(Security.username -> value.username)
           }
         )

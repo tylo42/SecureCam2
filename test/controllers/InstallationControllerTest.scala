@@ -75,7 +75,7 @@ class InstallationControllerTest extends Specification with Mockito {
       userService.isEmpty returns true
 
       val result = testObject.firstUser()(FakeRequest(POST, "post").withFormUrlEncodedBody(
-        "Username" -> "user",
+        "Username" -> "admin",
         "Password" -> "password1",
         "Confirm password" -> "password2"
       ))
@@ -86,12 +86,12 @@ class InstallationControllerTest extends Specification with Mockito {
     }
 
     "create first user" in new WithApplication {
-      val resultUser = User("user", "hashed password", "salt", 255)
+      val resultUser = User("admin", "hashed password", "salt", 255)
       userService.isEmpty returns true
-      userFactory.apply("user", "password", "super") returns resultUser
+      userFactory.apply("admin", "password", "super") returns resultUser
 
       val result = testObject.firstUser()(FakeRequest(POST, "post").withFormUrlEncodedBody(
-        "Username" -> "user",
+        "Username" -> "admin",
         "Password" -> "password",
         "Confirm password" -> "password"
       ))
