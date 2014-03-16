@@ -59,13 +59,17 @@ class ConcreteUserService(roleService: RoleService) extends UserService {
       ).executeUpdate()
   }
 
-  def delete(username: String): Unit = DB.withConnection { implicit c =>
-    SQL("delete from user where username = {username}").on(
-      'username -> username
-    ).executeUpdate()
+  def delete(username: String): Unit = {
+    if(!isSuper(username)) {
+      DB.withConnection { implicit c =>
+      SQL("delete from user where username = {username}").on(
+        'username -> username
+      ).executeUpdate()
+      }
+    }
   }
 
-  def isSuper(username: String): Boolean = isRole(username, "super") || isAdmin(username)
+  def isSuper(username: String): Boolean = isRole(username, "super")
   def isAdmin(username: String): Boolean = isRole(username, "admin")
 
   private def isRole(username: String, role: String): Boolean = {
