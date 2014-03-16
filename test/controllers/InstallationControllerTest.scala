@@ -30,7 +30,6 @@ class InstallationControllerTest extends Specification with Mockito {
 
       status(result) must equalTo(OK)
       contentType(result) must beSome("text/html")
-      contentAsString(result) must contain("Create first user")
     }
 
   }

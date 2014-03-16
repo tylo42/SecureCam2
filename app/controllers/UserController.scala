@@ -4,22 +4,11 @@ import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
 import models.{ConcreteRoleService, ConcreteUserService, UserService}
-import controllers.Authentication.Secured
-import views.html.helper.options
 
 case class UserRegistration(username: String, password: String, confirmPassword: String, role: Option[String])
 
-class UserController(userService: UserService, userFactory: UserFactory) extends Controller with Secured {
-  val userForm = Form(
-    mapping(
-      "Username" -> text(minLength = 3, maxLength = 32),
-      "Password" -> text(minLength = 6),
-      "Confirm password" -> text(minLength = 6),
-      "Role" -> optional(text)
-    )(UserRegistration.apply)(UserRegistration.unapply)
-      .verifying("Passwords must match", user => user.password == user.confirmPassword)
-
-  )
+class UserController(_userService: UserService, userFactory: UserFactory) extends Controller with Secured {
+  private val userForm = UserFormFactory(_userService)
 
   def users = isAdmin { username => implicit request =>
     Ok(views.html.users(Some(username), userService.all(), userForm))
@@ -35,14 +24,16 @@ class UserController(userService: UserService, userFactory: UserFactory) extends
       )
   }
 
-  def createUser(value: UserRegistration) = {
-    userService.create(userFactory(value.username, value.password, value.role.get))
-  }
-
-  def deleteUser(username: String) = Action {
+  def deleteUser(username: String) = isAdmin { signedInUser => implicit request =>
     userService.delete(username)
     Redirect(routes.UserController.users)
   }
+
+  private def createUser(value: UserRegistration) = {
+    userService.create(userFactory(value.username, value.password, value.role.get))
+  }
+
+  override val userService: UserService = _userService
 }
 
 object UserController extends UserController(new ConcreteUserService(new ConcreteRoleService), new ConcreteUserFactory(new ConcreteRoleService)) {}

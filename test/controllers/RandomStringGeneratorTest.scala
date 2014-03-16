@@ -2,7 +2,7 @@ package controllers
 
 import org.specs2.mutable.Specification
 
-class RandomStringGenerator$Test extends Specification {
+class RandomStringGeneratorTest extends Specification {
   "apply" should {
     "contain 10 characters" in {
       RandomStringGenerator(10) must have size(10)
