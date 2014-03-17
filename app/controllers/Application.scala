@@ -7,7 +7,7 @@ import models.{ConcreteRoleService, ConcreteUserService, UserService}
 class Application(_userService: UserService) extends Controller with Secured {
 
   def index = isAuthenticated { username => implicit request =>
-    Ok(views.html.main("title", Some(username))(Html("<p>test</p>")))
+    Ok(views.html.main("Home", Some(username))(Html("<p>test</p>")))
   }
 
   override val userService: UserService = _userService
