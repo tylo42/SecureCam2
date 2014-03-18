@@ -5,15 +5,15 @@ import org.specs2.mutable.Specification
 class RandomStringGeneratorTest extends Specification {
   "apply" should {
     "contain 10 characters" in {
-      RandomStringGenerator(10) must have size(10)
+      RandomStringGenerator(10) must have size (10)
     }
 
     "contain 20 characters" in {
-      RandomStringGenerator(20) must have size(20)
+      RandomStringGenerator(20) must have size (20)
     }
 
     "contain 100 characters" in {
-      RandomStringGenerator(100) must have size(100)
+      RandomStringGenerator(100) must have size (100)
     }
   }
 }

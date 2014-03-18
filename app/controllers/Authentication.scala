@@ -12,7 +12,7 @@ class Authentication(userService: UserService) extends Controller {
     tuple(
       "username" -> text,
       "password" -> text
-    ) verifying ("Invalid username or password", result => result match {
+    ) verifying("Invalid username or password", result => result match {
       case (username, password) => check(username, password)
     })
   )
@@ -25,19 +25,21 @@ class Authentication(userService: UserService) extends Controller {
 
   }
 
-  def login = Action { implicit request =>
-    if(userService.isEmpty) {
-      Redirect(routes.InstallationController.install())
-    } else {
-      Ok(views.html.login(loginForm))
-    }
+  def login = Action {
+    implicit request =>
+      if (userService.isEmpty) {
+        Redirect(routes.InstallationController.install())
+      } else {
+        Ok(views.html.login(loginForm))
+      }
   }
 
-  def authenticate = Action { implicit request =>
-    loginForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(views.html.login(formWithErrors)),
-      user => Redirect(routes.Application.index()).withSession(Security.username -> user._1)
-    )
+  def authenticate = Action {
+    implicit request =>
+      loginForm.bindFromRequest.fold(
+        formWithErrors => BadRequest(views.html.login(formWithErrors)),
+        user => Redirect(routes.Application.index()).withSession(Security.username -> user._1)
+      )
   }
 
   def logout = Action {

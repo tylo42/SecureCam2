@@ -10,14 +10,15 @@ case class Role(id: Long, name: String)
 
 trait RoleService {
   def getId(name: String): Option[Long]
+
   def getName(id: Long): Option[String]
 }
 
 class ConcreteRoleService extends RoleService {
   private val roleParser: RowParser[Role] = {
-      long("id") ~
+    long("id") ~
       str("name") map {
-      case id~name => Role(id, name)
+      case id ~ name => Role(id, name)
     }
   }
 

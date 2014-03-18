@@ -2,7 +2,7 @@ package controllers
 
 import org.specs2.mutable.Specification
 import org.specs2.mock.Mockito
-import models.{RoleService, UserService}
+import models.RoleService
 import io.github.nremond.PBKDF2
 
 class UserFactoryTest extends Specification with Mockito {
