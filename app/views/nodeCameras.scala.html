@@ -6,12 +6,12 @@
 
 <h1>@nodeCameras.size computer nodes(s)</h1>
 
-    <dl>
-        @nodeCameras.map { node =>
-        <dt>@node.node.hostname</dt>
-            @node.cameras.map { camera =>
-                <dd><a href='@routes.CameraController.camera(camera.camera_id)'>@camera.description</a></dd>
-            }
-        }
-    </dl>
+<dl>
+    @nodeCameras.map { node =>
+    <dt>@node.node.hostname</dt>
+    @node.cameras.map { camera =>
+    <dd><a href='@routes.CameraController.camera(camera.camera_id)'>@camera.description</a></dd>
+    }
+    }
+</dl>
 }

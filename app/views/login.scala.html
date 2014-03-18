@@ -4,23 +4,23 @@
 
 @main("Login", None) {
 
-    @form(routes.Authentication.authenticate) {
-        <h1>Sign in</h1>
+@form(routes.Authentication.authenticate) {
+<h1>Sign in</h1>
 
-        @loginForm.globalError.map { error =>
-            <p class="error">
-                @error.message
-            </p>
-        }
+@loginForm.globalError.map { error =>
+<p class="error">
+    @error.message
+</p>
+}
 
-        @flash.get("success").map { message =>
-            <p class="success">
-                @message
-            </p>
-        }
+@flash.get("success").map { message =>
+<p class="success">
+    @message
+</p>
+}
 
-        @inputText(loginForm("username"))
-        @inputPassword(loginForm("password"))
-        <input type="submit" value="Login">
-    }
+@inputText(loginForm("username"))
+@inputPassword(loginForm("password"))
+<input type="submit" value="Login">
+}
 }

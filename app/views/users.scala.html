@@ -6,32 +6,32 @@
 
 <h1>@users.size user(s)</h1>
 
-    <ul>
-        @users.map { user =>
-        <li>
-            @user.username
-            @user.password
-            @user.salt
-            @user.role_id
+<ul>
+    @users.map { user =>
+    <li>
+        @user.username
+        @user.password
+        @user.salt
+        @user.role_id
 
-            @form(routes.UserController.deleteUser(user.username)) {
-            <input type="submit" value="Delete">
-            }
-        </li>
+        @form(routes.UserController.deleteUser(user.username)) {
+        <input type="submit" value="Delete">
         }
-    </ul>
-
-    <h2>Add a new User</h2>
-
-    @userForm.globalError.map { error =>
-        <dd class="error">@error.message</dd>
+    </li>
     }
+</ul>
 
-    @form(routes.UserController.newUser) {
-        @inputText(userForm("Username"))
-        @inputPassword(userForm("Password"))
-        @inputPassword(userForm("Confirm password"))
-        @select(userForm("Role"), options(("view", "View"), ("admin", "Admin")))
-        <input type="submit" value="Create">
-    }
+<h2>Add a new User</h2>
+
+@userForm.globalError.map { error =>
+<dd class="error">@error.message</dd>
+}
+
+@form(routes.UserController.newUser) {
+@inputText(userForm("Username"))
+@inputPassword(userForm("Password"))
+@inputPassword(userForm("Confirm password"))
+@select(userForm("Role"), options(("view", "View"), ("admin", "Admin")))
+<input type="submit" value="Create">
+}
 }

@@ -5,24 +5,22 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-        <title>SecureCam - @title</title>
-        <link rel="stylesheet" media="screen" href='@routes.Assets.at("stylesheets/main.min.css")'>
-        <link rel="shortcut icon" type="image/png" href='@routes.Assets.at("images/favicon.png")'>
-        <script src='@routes.Assets.at("javascripts/jquery-1.9.0.min.js")' type="text/javascript"></script>
-        <script src='@routes.Assets.at("javascripts/main.min.js")' type="text/javascript"></script>
-    </head>
-    <body>
+@head(title)
+<body>
 
-    <p></p>
+@if(username.isDefined) {
+@navigation()
+}
 
-        @content
+<p></p>
 
-    <p></p>
+@content
 
-    @if(username.isDefined) {
-        <a href="@routes.Authentication.logout">Logout</a>
-    }
+<p></p>
 
-    </body>
+@if(username.isDefined) {
+<a href="@routes.Authentication.logout">Logout</a>
+}
+
+</body>
 </html>
