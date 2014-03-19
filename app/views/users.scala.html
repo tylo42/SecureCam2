@@ -1,8 +1,8 @@
-@(username: Option[String], users: List[User], userForm: Form[UserRegistration])
+@(users: List[User], userForm: Form[UserRegistration])(implicit username: String)
 
 @import helper._
 
-@main("Users", username) {
+@main("Users", Some(username)) {
 
 <h1>@users.size user(s)</h1>
 

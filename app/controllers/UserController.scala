@@ -9,14 +9,14 @@ class UserController(_userService: UserService, userFactory: UserFactory) extend
   private val userForm = UserFormFactory(_userService)
 
   def users = isAdmin {
-    username => implicit request =>
-      Ok(views.html.users(Some(username), userService.all(), userForm))
+    implicit username => implicit request =>
+      Ok(views.html.users(userService.all(), userForm))
   }
 
   def newUser = isAdmin {
-    username => implicit request =>
+    implicit username => implicit request =>
       userForm.bindFromRequest().fold(
-        errors => BadRequest(views.html.users(Some(username), userService.all(), errors)),
+        errors => BadRequest(views.html.users(userService.all(), errors)),
         value => {
           createUser(value)
           Redirect(routes.UserController.users())

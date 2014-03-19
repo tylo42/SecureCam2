@@ -1,8 +1,8 @@
-@(username: Option[String], nodeCameras: List[NodeCameras])
+@(nodeCameras: List[NodeCameras])(implicit username: String)
 
 @import helper._
 
-@main("Cameras", username) {
+@main("Cameras", Some(username)) {
 
 <h1>@nodeCameras.size computer nodes(s)</h1>
 

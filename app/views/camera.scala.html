@@ -1,8 +1,8 @@
-@(username: Option[String], camera: Camera, node: Node)
+@(camera: Camera, node: Node)(implicit username: String)
 
 @import helper._
 
-@main("Camera @camera.camera_id", username) {
+@main("Camera @camera.camera_id", Some(username)) {
 
 <h1>Camera @camera.camera_id</h1>
 

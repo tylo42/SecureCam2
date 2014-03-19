@@ -5,8 +5,8 @@ import models.{ConcreteRoleService, ConcreteUserService, UserService, NodeCamera
 
 class NodeCamerasController(_userService: UserService) extends Controller with Secured {
   def cameras = isAuthenticated {
-    username => implicit request =>
-      Ok(views.html.nodeCameras(Some(username), NodeCameras.all()))
+    implicit username => implicit request =>
+      Ok(views.html.nodeCameras(NodeCameras.all()))
   }
 
   override val userService: UserService = _userService
