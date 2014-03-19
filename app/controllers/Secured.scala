@@ -18,10 +18,6 @@ trait Secured {
     user => userService.isAdmin(user) || userService.isSuper(user)
   }
 
-  def isSuper(f: => String => Request[AnyContent] => Result) = hasPrivileges(f) {
-    user => userService.isSuper(user)
-  }
-
   private def hasPrivileges(f: => String => Request[AnyContent] => Result)(g: String => Boolean) = isAuthenticated {
     user => request =>
       if (g(user)) {
