@@ -1,26 +1,51 @@
-@primary-color: #00F0F0;
-@background: grey;
+@indent: 50px;
 
-@message-padding: 5px;
-@message-border-width: 2px;
 
 body {
-    background: @background;
-    color: @primary-color;
+    margin: 50px;
+}
+
+.flash-message {
+    border-style: solid;
+    border-width: 2px;
+    display: inline-block;
+    padding: 0px;
+    margin: 0px 0px 0px @indent;
+    p {
+        padding: 5px;
+        margin: 5px;
+    }
 }
 
 .error {
     background: #EEB4B4;
     color: red;
-    border-style: solid;
-    border-width: @message-border-width;
-    padding: @message-padding;
 }
 
 .success {
     background: #B4EEB4;
     color: green;
-    border-style: solid;
-    border-width: @message-border-width;
-    padding: @message-padding;
+}
+
+#navigation {
+    width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    ul {
+        list-style-type: none;
+        li {
+            display: inline;
+            margin: 0px 45px 0px 45px;
+            font-size: 30px;
+            a {
+                padding: 20px;
+                background: #FF0000;
+                color: #FFFFFF;
+                text-decoration: none;
+            }
+            a:hover {
+                background: #000000;
+            }
+        }
+    }
 }

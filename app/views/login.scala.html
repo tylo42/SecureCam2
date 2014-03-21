@@ -8,15 +8,19 @@
 <h1>Sign in</h1>
 
 @loginForm.globalError.map { error =>
-<p class="error">
-    @error.message
-</p>
+<div class="error flash-message">
+    <p>
+        @error.message
+    </p>
+</div>
 }
 
 @flash.get("success").map { message =>
-<p class="success">
-    @message
-</p>
+<div class="success flash-message">
+    <p>
+        @message
+    </p>
+</div>
 }
 
 @inputText(loginForm("username"))

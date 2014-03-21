@@ -12,7 +12,7 @@ class Authentication(userService: UserService) extends Controller {
     tuple(
       "username" -> text,
       "password" -> text
-    ) verifying("Invalid username or password", result => result match {
+    ) verifying("Username or password is incorrect", result => result match {
       case (username, password) => check(username, password)
     })
   )
@@ -44,7 +44,7 @@ class Authentication(userService: UserService) extends Controller {
 
   def logout = Action {
     Redirect(routes.Authentication.login()).withNewSession.flashing(
-      "success" -> "You are now logged out."
+      "success" -> "You have successfully logged out."
     )
   }
 }
