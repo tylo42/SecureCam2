@@ -9,7 +9,7 @@ CREATE TABLE Node(
 );
 
 CREATE TABLE Camera(
-    id   INT UNSIGNED    NOT NULL,
+    id          INT UNSIGNED    NOT NULL,
     port        INT UNSIGNED    NOT NULL,
     description	VARCHAR(255),
     node_id     INT UNSIGNED    NOT NULL,
@@ -21,11 +21,10 @@ ALTER TABLE Camera ADD CONSTRAINT RefNode
     REFERENCES Node(id);
 
 CREATE TABLE Video(
-    id       INT UNSIGNED   AUTO_INCREMENT,
+    id           INT UNSIGNED   AUTO_INCREMENT,
     time         INT UNSIGNED   NOT NULL,
-    video_name   VARCHAR(255)   NOT NULL,
-    picture_name VARCHAR(255)   NOT NULL,
-    event        INT UNSIGNED   NOT NULL,
+    video        VARCHAR(255)   NOT NULL,
+    picture      VARCHAR(255)   NOT NULL,
     flagged      boolean        NOT NULL   DEFAULT 0,
     camera_id    INT UNSIGNED   NOT NULL,
     PRIMARY KEY(id)
