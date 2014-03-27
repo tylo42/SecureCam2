@@ -3,7 +3,6 @@ package models
 import play.api.db.DB
 import anorm._
 import anorm.SqlParser._
-import anorm.~
 import play.api.Play.current
 
 case class User(username: String, password: String, salt: String, role_id: Long)
