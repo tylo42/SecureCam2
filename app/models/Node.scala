@@ -1,20 +1,44 @@
 package models
 
-case class Node(node_id: Long, hostname: String)
+import anorm._
+import anorm.SqlParser._
+import play.api.db.DB
+import play.api.Play.current
 
-object Node {
-  def all(): List[Node] = {
-    dummy
+case class Node(id: Long, hostname: String)
+
+
+trait NodeService {
+  def all(): List[Node]
+
+  def get(id: Long): Option[Node]
+}
+
+class ConcreteNodeService() extends NodeService {
+  private val nodeParser: RowParser[Node] = {
+    long("id") ~
+      str("hostname") map {
+      case id ~ hostname => Node(id, hostname)
+    }
   }
 
-  def getByCameraId(id: Long): Node = {
-    val node_id = Camera.get(id).node_id
-    dummy.find(_.node_id == node_id).get
+  private val nodesParser: ResultSetParser[List[Node]] = nodeParser.*
+
+
+  def all(): List[Node] = DB.withConnection {
+    implicit c => {
+      SQL("select * from Node order by id").as(nodesParser)
+    }
   }
 
-  val dummy = List(
-    Node(1, "localhost"),
-    Node(2, "node1")
-  )
-
+  def get(id: Long): Option[Node] = DB.withConnection {
+    implicit c => {
+      SQL("select * from Node where id = {id}").on(
+        'id -> id
+      ).as(nodesParser) match {
+        case Nil => None
+        case l => Some(l.head)
+      }
+    }
+  }
 }

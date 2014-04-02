@@ -1,0 +1,23 @@
+@(videos: List[Video])
+
+@import helper._
+
+@main("Users", None) {
+
+<h1>@videos.size videos(s)</h1>
+
+<ul>
+    @videos.map { video =>
+    <li>
+        @video.id
+        @video.time
+        @video.video
+        @video.picture
+        @video.flagged
+        @video.camera_id
+    </li>
+    }
+</ul>
+
+
+}

@@ -1,21 +1,56 @@
 package models
 
-case class Camera(camera_id: Long, port: Long, description: String, node_id: Long)
+import anorm._
+import anorm.SqlParser._
+import play.api.db.DB
+import play.api.Play.current
 
-object Camera {
-  def all(): List[Camera] = {
-    dummy
+case class Camera(id: Long, port: Long, description: String, node_id: Long)
+
+trait CameraService {
+  def addCamera(port: Long, description: String, nodeId: Long): Unit
+
+  def all(): List[Camera]
+
+  def get(id: Long): Option[Camera]
+}
+
+class ConcreteCameraService extends CameraService {
+  private val cameraParser: RowParser[Camera] = {
+    long("id") ~
+      long("port") ~
+      str("description") ~
+      long("node_id") map {
+      case id ~ port ~ description ~ node_id => Camera(id, port, description, node_id)
+    }
   }
 
-  def get(id: Long): Camera = {
-    dummy.find(_.camera_id == id).get
+  private val camerasParser: ResultSetParser[List[Camera]] = cameraParser.*
+
+  def all(): List[Camera] = DB.withConnection {
+    implicit c => {
+      SQL("select * from camera order by id").as(camerasParser)
+    }
   }
 
+  def get(id: Long): Option[Camera] = DB.withConnection {
+    implicit c => {
+      SQL("select * from camera where id = {id}").on(
+        'id -> id
+      ).as(camerasParser) match {
+        case Nil => None
+        case l => Some(l.head)
+      }
+    }
+  }
 
-  val dummy = List(
-    Camera(1, 50505, "Front door", 1),
-    Camera(2, 50506, "Back door", 2),
-    Camera(3, 50506, "Living room", 2)
-  )
-
+  def addCamera(port: Long, description: String, nodeId: Long): Unit = DB.withConnection {
+    implicit c => {
+      SQL("insert into camera(port, description, node_id) values({port}, {description}, {nodeId})").on(
+        'port -> port,
+        'description -> description,
+        'nodeId -> nodeId
+      ).executeUpdate
+    }
+  }
 }

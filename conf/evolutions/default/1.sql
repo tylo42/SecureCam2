@@ -9,7 +9,7 @@ CREATE TABLE Node(
 );
 
 CREATE TABLE Camera(
-    id          INT UNSIGNED    NOT NULL,
+    id          INT UNSIGNED    AUTO_INCREMENT,
     port        INT UNSIGNED    NOT NULL,
     description	VARCHAR(255),
     node_id     INT UNSIGNED    NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE Video(
     id           INT UNSIGNED   AUTO_INCREMENT,
     time         INT UNSIGNED   NOT NULL,
     video        VARCHAR(255)   NOT NULL,
-    picture      VARCHAR(255)   NOT NULL,
+    picture      VARCHAR(255),
     flagged      boolean        NOT NULL   DEFAULT 0,
     camera_id    INT UNSIGNED   NOT NULL,
     PRIMARY KEY(id)
@@ -57,6 +57,8 @@ ALTER TABLE User ADD CONSTRAINT RefRole
 INSERT INTO Role(name) VALUES('view');
 INSERT INTO Role(name) VALUES('admin');
 INSERT INTO Role(name) VALUES('super');
+
+INSERT INTO Node(hostname) VALUES('localhost')
 
 # --- !Downs
 

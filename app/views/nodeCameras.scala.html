@@ -8,9 +8,9 @@
 
 <dl>
     @nodeCameras.map { node =>
-    <dt>@node.node.hostname</dt>
+    <dt><a href='@routes.NodeController.node(node.node.id)'>@node.node.hostname</a></dt>
     @node.cameras.map { camera =>
-    <dd><a href='@routes.CameraController.camera(camera.camera_id)'>@camera.description</a></dd>
+    <dd>@camera.description</dd>
     }
     }
 </dl>

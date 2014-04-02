@@ -19,9 +19,20 @@ GET     /users                      controllers.UserController.users
 POST    /users                      controllers.UserController.newUser
 POST    /users/:id/delete           controllers.UserController.deleteUser(id: String)
 
+# NodeCameras
+GET     /nodeCameras                controllers.NodeCamerasController.cameras
+
+# Node
+GET     /node/:id                   controllers.NodeController.node(id: Long)
+POST    /node/:id                   controllers.NodeController.addCameraToNode(id: Long)
+
 # Camera
-GET     /cameras                    controllers.NodeCamerasController.cameras
 GET     /cameras/:id                controllers.CameraController.camera(id: Long)
+
+#Video
+POST    /newVideo                   controllers.VideoController.newVideo
+#POST    /newPicture                   controllers.VideoController.newPicture
+GET     /videos                     controllers.VideoController.allVideos
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
