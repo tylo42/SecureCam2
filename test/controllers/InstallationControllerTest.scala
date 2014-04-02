@@ -5,13 +5,17 @@ import play.api.test.Helpers._
 
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
-import models.{User, UserService}
+import models.{User, UserRoleService, UserService}
 
 class InstallationControllerTest extends Specification with Mockito {
+  val userRoleService = mock[UserRoleService]
   val userService = mock[UserService]
   val userFactory = mock[UserFactory]
 
-  val testObject = new InstallationController(userService, userFactory)
+  userRoleService.users returns userService
+
+  val testObject = new InstallationController(userRoleService, userFactory)
+
 
   "Installation controller install" should {
     "redirect home" in {

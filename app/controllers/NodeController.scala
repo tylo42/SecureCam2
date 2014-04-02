@@ -7,7 +7,7 @@ import play.api.data.Forms._
 
 case class newCamera(port: Long, description: String)
 
-class NodeController(_userService: UserService, nodeCamerasService: NodeCamerasService) extends Controller with Secured {
+class NodeController(_userRoleService: UserRoleService, nodeCamerasService: NodeCamerasService) extends Controller with Secured {
   private val cameraForm = Form(
     mapping(
       "Port" -> longNumber(min = 1024, max = 65535),
@@ -31,7 +31,7 @@ class NodeController(_userService: UserService, nodeCamerasService: NodeCamerasS
       )
   }
 
-  override val userService: UserService = _userService
+  override val userRoleService = _userRoleService
 }
 
-object NodeController extends NodeController(new ConcreteUserService(new ConcreteRoleService()), new ConcreteNodeCamerasService(new ConcreteNodeService(), new ConcreteCameraService()))
+object NodeController extends NodeController(new ConcreteUserRoleService(new ConcreteUserService, new ConcreteRoleService()), new ConcreteNodeCamerasService(new ConcreteNodeService(), new ConcreteCameraService()))

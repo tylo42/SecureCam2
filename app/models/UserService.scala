@@ -19,13 +19,9 @@ trait UserService {
   def create(user: User): Unit
 
   def delete(username: String): Unit
-
-  def isSuper(username: String): Boolean
-
-  def isAdmin(username: String): Boolean
 }
 
-class ConcreteUserService(roleService: RoleService) extends UserService {
+class ConcreteUserService extends UserService {
   private val userParser: RowParser[User] = {
     str("username") ~
       str("password") ~
@@ -65,24 +61,11 @@ class ConcreteUserService(roleService: RoleService) extends UserService {
   }
 
   def delete(username: String): Unit = {
-    if (!isSuper(username)) {
-      DB.withConnection {
-        implicit c =>
-          SQL("delete from user where username = {username}").on(
-            'username -> username
-          ).executeUpdate()
-      }
-    }
-  }
-
-  def isSuper(username: String): Boolean = isRole(username, "super")
-
-  def isAdmin(username: String): Boolean = isRole(username, "admin")
-
-  private def isRole(username: String, role: String): Boolean = {
-    get(username) match {
-      case None => false
-      case Some(user) => roleService.getName(user.role_id).get.equalsIgnoreCase(role)
+    DB.withConnection {
+      implicit c =>
+        SQL("delete from user where username = {username}").on(
+          'username -> username
+        ).executeUpdate()
     }
   }
 }

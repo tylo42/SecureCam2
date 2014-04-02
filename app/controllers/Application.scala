@@ -2,16 +2,17 @@ package controllers
 
 import play.api.mvc._
 import play.api.templates.Html
-import models.{ConcreteRoleService, ConcreteUserService, UserService}
+import models._
+import scala.Some
 
-class Application(_userService: UserService) extends Controller with Secured {
+class Application(_userRoleService: UserRoleService) extends Controller with Secured {
 
   def index = isAuthenticated {
     username => implicit request =>
       Ok(views.html.main("Home", Some(username))(Html("<p>test</p>")))
   }
 
-  override val userService: UserService = _userService
+  override val userRoleService = _userRoleService
 }
 
-object Application extends Application(new ConcreteUserService(new ConcreteRoleService()))
+object Application extends Application(new ConcreteUserRoleService(new ConcreteUserService, new ConcreteRoleService()))

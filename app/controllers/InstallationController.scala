@@ -1,13 +1,13 @@
 package controllers
 
 import play.api.mvc._
-import models.{ConcreteRoleService, UserService, ConcreteUserService}
+import models._
 
-class InstallationController(userService: UserService, userFactory: UserFactory) extends Controller {
-  private val userForm = UserFormFactory(userService)
+class InstallationController(userRoleService: UserRoleService, userFactory: UserFactory) extends Controller {
+  private val userForm = UserFormFactory(userRoleService.users)
 
   def install = Action {
-    if (!userService.isEmpty) {
+    if (!userRoleService.users.isEmpty) {
       Redirect(routes.Application.index())
     } else {
       Ok(views.html.install(userForm.fill(UserRegistration("admin", "", "", None))))
@@ -17,13 +17,13 @@ class InstallationController(userService: UserService, userFactory: UserFactory)
   def firstUser = Action {
     implicit request =>
       this.synchronized {
-        if (!userService.isEmpty) {
+        if (!userRoleService.users.isEmpty) {
           Redirect(routes.Application.index())
         } else {
           userForm.bindFromRequest().fold(
             errors => BadRequest(views.html.install(errors)),
             value => {
-              userService.create(userFactory("admin", value.password, "super"))
+              userRoleService.users.create(userFactory("admin", value.password, "super"))
               Redirect(routes.Application.index()).withSession(Security.username -> value.username)
             }
           )
@@ -32,4 +32,4 @@ class InstallationController(userService: UserService, userFactory: UserFactory)
   }
 }
 
-object InstallationController extends InstallationController(new ConcreteUserService(new ConcreteRoleService), new ConcreteUserFactory(new ConcreteRoleService())) {}
+object InstallationController extends InstallationController(new ConcreteUserRoleService(new ConcreteUserService, new ConcreteRoleService()), new ConcreteUserFactory(new ConcreteRoleService())) {}

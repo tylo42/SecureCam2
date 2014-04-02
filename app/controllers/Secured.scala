@@ -2,10 +2,10 @@ package controllers
 
 import play.api.mvc._
 import scala.Some
-import models.UserService
+import models.UserRoleService
 
 trait Secured {
-  val userService: UserService
+  val userRoleService: UserRoleService
 
   def isAuthenticated(f: => String => Request[AnyContent] => Result) = {
     Security.Authenticated(username, onUnauthorized) {
@@ -15,7 +15,7 @@ trait Secured {
   }
 
   def isAdmin(f: => String => Request[AnyContent] => Result) = hasPrivileges(f) {
-    user => userService.isAdmin(user) || userService.isSuper(user)
+    user => userRoleService.isAdmin(user) || userRoleService.isSuper(user)
   }
 
   private def hasPrivileges(f: => String => Request[AnyContent] => Result)(g: String => Boolean) = isAuthenticated {
@@ -30,7 +30,7 @@ trait Secured {
   private def username(request: RequestHeader): Option[String] = {
     request.session.get(Security.username).flatMap {
       username =>
-        if (userService.exists(username)) {
+        if (userRoleService.users.exists(username)) {
           Some(username)
         } else {
           None
