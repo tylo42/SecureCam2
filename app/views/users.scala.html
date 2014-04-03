@@ -25,7 +25,9 @@
 <h2>Add a new User</h2>
 
 @userForm.globalError.map { error =>
-<dd class="error">@error.message</dd>
+<div class="error flash-message">
+    <p>@error.message</p>
+</div>
 }
 
 @form(routes.UserController.newUser) {
