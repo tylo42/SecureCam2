@@ -6,18 +6,16 @@
 
 <h1>@videos.size @if(videos.size == 1) { video } else { videos }</h1>
 
-<ul>
-    @videos.map { video =>
-    <li>
-        @video.id
-        @video.time
-        @video.video
-        @video.picture
-        @video.flagged
-        @video.camera_id
-    </li>
-    }
-</ul>
+@videos.map { video =>
+<dl>
+    <dt>Video id: @video.id</dt>
+    <dd>Time: @video.time.toString("yyyy-MM-dd HH:mm:ss")</dd>
+    <dd>Video: @video.video</dd>
+    <dd>Picture: @video.picture</dd>
+    <dd>Flagged: @video.flagged</dd>
+    <dd>Camera id: @video.camera_id</dd>
+</dl>
+}
 
 
 }
