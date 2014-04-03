@@ -1,8 +1,8 @@
-@(videos: List[Video])
+@(videos: List[Video])(implicit username: String)
 
 @import helper._
 
-@main("Users", None) {
+@main("Users", Some(username)) {
 
 <h1>@videos.size videos(s)</h1>
 

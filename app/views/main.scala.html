@@ -12,11 +12,9 @@
 @navigation()
 }
 
-<p></p>
-
-@content
-
-<p></p>
+<div id="content">
+    @content
+</div>
 
 @if(username.isDefined) {
 <a href="@routes.Authentication.logout">Logout</a>
