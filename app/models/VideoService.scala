@@ -24,7 +24,7 @@ class ConcreteVideoService extends VideoService {
       get[Option[String]]("picture") ~
       bool("flagged") ~
       long("camera_id") map {
-      case id ~ time ~ video ~ picture ~ flagged ~ camera_id => Video(id, new DateTime(time), video, picture, flagged, camera_id)
+      case id ~ time ~ video ~ picture ~ flagged ~ camera_id => Video(id, new DateTime(time * 1000), video, picture, flagged, camera_id)
     }
   }
 

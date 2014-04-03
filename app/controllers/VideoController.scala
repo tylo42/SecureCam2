@@ -3,6 +3,7 @@ package controllers
 import play.api.mvc.{Action, Controller}
 import play.api.data.Forms._
 import play.api.data.Form
+import play.Logger
 import models._
 
 case class VideoInsert(time: Long, video: String, camera_id: Long)
@@ -21,6 +22,7 @@ class VideoController(_userRoleService: UserRoleService, videoService: VideoServ
       videoForm.bindFromRequest().fold(
         errors => BadRequest,
         value => {
+          Logger.info("Adding video: " + value)
           videoService.insertVideo(value.time, value.video, value.camera_id)
           Ok
         }
