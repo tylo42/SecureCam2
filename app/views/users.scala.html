@@ -4,7 +4,8 @@
 
 @main("Users", Some(username)) {
 
-<h1>@users.size user(s)</h1>
+
+<h1>@users.size @if(users.size == 1) { user } else { users }</h1>
 
 <ul>
     @users.map { user =>

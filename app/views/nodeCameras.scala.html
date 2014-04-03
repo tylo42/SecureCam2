@@ -4,7 +4,7 @@
 
 @main("Cameras", Some(username)) {
 
-<h1>@nodeCameras.size computer nodes(s)</h1>
+<h1>@nodeCameras.size computer @if(nodeCameras.size == 1) { node } else { nodes }</h1>
 
 <dl>
     @nodeCameras.map { node =>
