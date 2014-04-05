@@ -3,7 +3,7 @@ package controllers
 import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
-
+import play.Logger
 import models._
 import io.github.nremond.PBKDF2
 import scala.Some
@@ -39,7 +39,10 @@ class Authentication(userRoleService: UserRoleService) extends Controller {
     implicit request =>
       loginForm.bindFromRequest.fold(
         formWithErrors => BadRequest(views.html.login(formWithErrors)),
-        user => Redirect(routes.Application.index()).withSession(Security.username -> user._1)
+        user => {
+          Logger.info("User logged in: " + user._1)
+          Redirect(routes.Application.index()).withSession(Security.username -> user._1)
+        }
       )
   }
 

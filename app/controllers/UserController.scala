@@ -3,8 +3,6 @@ package controllers
 import play.api.mvc._
 import models._
 
-case class UserRegistration(username: String, password: String, confirmPassword: String, role: Option[String])
-
 class UserController(_userRoleService: UserRoleService, userFactory: UserFactory) extends Controller with Secured {
   private val userForm = UserFormFactory(_userRoleService.users)
 

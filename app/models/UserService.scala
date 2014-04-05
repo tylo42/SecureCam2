@@ -1,9 +1,10 @@
 package models
 
 import play.api.db.DB
+import play.api.Play.current
+import play.Logger
 import anorm._
 import anorm.SqlParser._
-import play.api.Play.current
 
 case class User(username: String, password: String, salt: String, role_id: Long)
 
@@ -52,6 +53,7 @@ class ConcreteUserService extends UserService {
 
   def create(user: User): Unit = DB.withConnection {
     implicit c =>
+      Logger.info("Created user: " + user.username)
       SQL("insert into user (username, password, salt, role_id) values ({username}, {password}, {salt}, {role_id})").on(
         'username -> user.username,
         'password -> user.password,
@@ -60,12 +62,11 @@ class ConcreteUserService extends UserService {
       ).executeUpdate()
   }
 
-  def delete(username: String): Unit = {
-    DB.withConnection {
-      implicit c =>
-        SQL("delete from user where username = {username}").on(
-          'username -> username
-        ).executeUpdate()
-    }
+  def delete(username: String): Unit = DB.withConnection {
+    implicit c =>
+      Logger.info("Deleting user: " + username)
+      SQL("delete from user where username = {username}").on(
+        'username -> username
+      ).executeUpdate()
   }
 }

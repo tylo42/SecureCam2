@@ -15,7 +15,7 @@ trait UserRoleService {
 class ConcreteUserRoleService(_userService: UserService, roleService: RoleService) extends UserRoleService {
   def delete(implicit username: String): Unit = {
     if (!isSuper) {
-      //users.delete(username)
+      users.delete(username)
     }
   }
 
