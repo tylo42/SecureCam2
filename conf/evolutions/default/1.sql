@@ -26,6 +26,7 @@ CREATE TABLE Video(
     video        VARCHAR(255)   NOT NULL,
     picture      VARCHAR(255),
     flagged      boolean        NOT NULL   DEFAULT 0,
+    event        INT UNSIGNED   NOT NULL,
     camera_id    INT UNSIGNED   NOT NULL,
     PRIMARY KEY(id)
 );

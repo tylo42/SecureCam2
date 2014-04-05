@@ -31,7 +31,7 @@ GET     /cameras/:id                controllers.CameraController.camera(id: Long
 
 #Video
 POST    /newVideo                   controllers.VideoController.newVideo
-#POST    /newPicture                   controllers.VideoController.newPicture
+POST    /newPicture                 controllers.VideoController.newPicture
 GET     /videos                     controllers.VideoController.allVideos
 
 # Map static resources from the /public folder to the /assets URL path

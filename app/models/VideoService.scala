@@ -6,12 +6,14 @@ import anorm.SqlParser._
 import play.api.db.DB
 import play.api.Play.current
 
-case class Video(id: Long, time: DateTime, video: String, picture: Option[String], flagged: Boolean, camera_id: Long)
+case class Video(id: Long, time: DateTime, video: String, picture: Option[String], flagged: Boolean, event: Long, camera_id: Long)
 
 trait VideoService {
   def getBetweenInterval(interval: Interval, flagged: Option[Boolean] = None): List[Video]
 
-  def insertVideo(time: Long, video: String, camera_id: Long): Unit
+  def insertVideo(time: Long, video: String, event: Long, camera_id: Long): Unit
+
+  def insertPicture(picture: String, event: Long, camera_id: Long): Unit
 
   def all(): List[Video]
 }
@@ -23,8 +25,9 @@ class ConcreteVideoService extends VideoService {
       str("video") ~
       get[Option[String]]("picture") ~
       bool("flagged") ~
+      long("event") ~
       long("camera_id") map {
-      case id ~ time ~ video ~ picture ~ flagged ~ camera_id => Video(id, new DateTime(time * 1000), video, picture, flagged, camera_id)
+      case id ~ time ~ video ~ picture ~ flagged ~ event ~ camera_id => Video(id, new DateTime(time * 1000), video, picture, flagged, event, camera_id)
     }
   }
 
@@ -53,12 +56,23 @@ class ConcreteVideoService extends VideoService {
     }
   }
 
-  def insertVideo(time: Long, video: String, camera_id: Long): Unit = DB.withConnection {
+  def insertVideo(time: Long, video: String, event: Long, camera_id: Long): Unit = DB.withConnection {
     implicit c => {
-      SQL("insert into video (time, video, camera_id) values ({time}, {video}, {camera_id})").on(
+      SQL("insert into video (time, video, event, camera_id) values ({time}, {video}, {event}, {camera_id})").on(
         'time -> time,
         'video -> video,
+        'event -> event,
         'camera_id -> camera_id
+      ).executeUpdate()
+    }
+  }
+
+  def insertPicture(picture: String, event: Long, camera_id: Long): Unit = DB.withConnection {
+    implicit c => {
+      SQL("update video set picture = {picture} where id = (select max(id) from video where camera_id = {camera_id} and event = {event})").on(
+        'picture -> picture,
+        'camera_id -> camera_id,
+        'event -> event
       ).executeUpdate()
     }
   }
