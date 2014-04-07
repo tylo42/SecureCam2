@@ -1,10 +1,12 @@
 package models
 
+import java.io.File
+
 
 case class NodeCameras(node: Node, cameras: List[Camera])
 
 trait NodeCamerasService {
-  def addCameraToNode(port: Long, description: String, nodeId: Long): Unit
+  def addCameraToNode(port: Long, device: File, description: String, nodeId: Long): Unit
 
   def all(): List[NodeCameras]
 
@@ -40,7 +42,7 @@ class ConcreteNodeCamerasService(nodeService: NodeService, cameraService: Camera
 
   def getCameraById(cameraId: Long): Option[Camera] = cameraService.get(cameraId)
 
-  def addCameraToNode(port: Long, description: String, nodeId: Long): Unit = {
-    cameraService.addCamera(port, description, nodeId)
+  def addCameraToNode(port: Long, device: File, description: String, nodeId: Long): Unit = {
+    cameraService.addCamera(port, device, description, nodeId)
   }
 }

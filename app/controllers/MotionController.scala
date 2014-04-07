@@ -35,6 +35,7 @@ class MotionController(nodeCamerasService: NodeCamerasService) extends Controlle
   }
 
   def writeConfig(): Unit = {
+    motionDirectory.mkdirs()
     deleteConfigFiles()
 
     val cameraFile = nodeCamerasService.nodeCameras(1).fold(List[(Camera, File)]())(nodeCameras => {
@@ -87,7 +88,7 @@ class MotionController(nodeCamerasService: NodeCamerasService) extends Controlle
     Logger.info("Writing " + threadFile)
     val writer = new PrintWriter(threadFile)
     writer.write(
-      "videodevice /dev/video0\n" +
+      "videodevice " + camera.device.getAbsolutePath + "\n" +
       "target_dir " + new File(videoDirectory, "camera" + camera.id) + "\n" +
       "webcam_port " + camera.port + "\n" +
       "on_movie_start curl -X POST -d \"time=%s&video=%f&event=%v&camera_id=" + camera.id + "\" http://localhost:9000/newVideo\n" +

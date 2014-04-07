@@ -20,6 +20,7 @@
 
 @form(routes.NodeController.addCameraToNode(nodeCameras.node.id)) {
 @inputText(cameraForm("Port"))
+@inputText(cameraForm("Device"))
 @inputText(cameraForm("Description"))
 <input type="submit" value="Create">
 }

@@ -11,6 +11,7 @@ CREATE TABLE Node(
 CREATE TABLE Camera(
     id          INT UNSIGNED    AUTO_INCREMENT,
     port        INT UNSIGNED    NOT NULL,
+    device      VARCHAR(255)    NOT NULL,
     description	VARCHAR(255),
     node_id     INT UNSIGNED    NOT NULL,
     PRIMARY KEY(id)

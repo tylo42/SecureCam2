@@ -4,13 +4,16 @@ import models._
 import play.api.mvc.Controller
 import play.api.data.Form
 import play.api.data.Forms._
+import java.io.File
 
-case class newCamera(port: Long, description: String)
+case class newCamera(port: Long, device: String, description: String)
 
 class NodeController(_userRoleService: UserRoleService, nodeCamerasService: NodeCamerasService) extends Controller with Secured {
   private val cameraForm = Form(
     mapping(
       "Port" -> longNumber(min = 1024, max = 65535),
+      "Device" -> text()
+        .verifying("Device does not exist", s => new File("/dev", s).exists()),
       "Description" -> text(minLength = 6)
     )(newCamera.apply)(newCamera.unapply)
   )
@@ -25,7 +28,7 @@ class NodeController(_userRoleService: UserRoleService, nodeCamerasService: Node
       cameraForm.bindFromRequest().fold(
         errors => BadRequest(views.html.node(nodeCamerasService.nodeCameras(nodeId).get, errors)),
         value => {
-          nodeCamerasService.addCameraToNode(value.port, value.description, nodeId)
+          nodeCamerasService.addCameraToNode(value.port, new File("/dev", value.device), value.description, nodeId)
           Redirect(routes.NodeController.node(nodeId))
         }
       )

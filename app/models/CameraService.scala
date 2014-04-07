@@ -4,11 +4,12 @@ import anorm._
 import anorm.SqlParser._
 import play.api.db.DB
 import play.api.Play.current
+import java.io.File
 
-case class Camera(id: Long, port: Long, description: String, node_id: Long)
+case class Camera(id: Long, port: Long, device: File, description: String, node_id: Long)
 
 trait CameraService {
-  def addCamera(port: Long, description: String, nodeId: Long): Unit
+  def addCamera(port: Long, device: File, description: String, nodeId: Long): Unit
 
   def all(): List[Camera]
 
@@ -19,9 +20,10 @@ class ConcreteCameraService extends CameraService {
   private val cameraParser: RowParser[Camera] = {
     long("id") ~
       long("port") ~
+      str("device") ~
       str("description") ~
       long("node_id") map {
-      case id ~ port ~ description ~ node_id => Camera(id, port, description, node_id)
+      case id ~ port ~ device ~ description ~ node_id => Camera(id, port, new File(device), description, node_id)
     }
   }
 
@@ -44,10 +46,11 @@ class ConcreteCameraService extends CameraService {
     }
   }
 
-  def addCamera(port: Long, description: String, nodeId: Long): Unit = DB.withConnection {
+  def addCamera(port: Long, device: File, description: String, nodeId: Long): Unit = DB.withConnection {
     implicit c => {
-      SQL("insert into camera(port, description, node_id) values({port}, {description}, {nodeId})").on(
+      SQL("insert into camera(port, device, description, node_id) values({port}, {device}, {description}, {nodeId})").on(
         'port -> port,
+        'device -> device.getAbsolutePath,
         'description -> description,
         'nodeId -> nodeId
       ).executeUpdate
