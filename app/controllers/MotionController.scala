@@ -34,6 +34,12 @@ class MotionController(nodeCamerasService: NodeCamerasService) extends Controlle
     }
   }
 
+  def restartMotion(): Unit = {
+    stopMotion()
+    Thread.sleep(5000)
+    startMotion()
+  }
+
   def writeConfig(): Unit = {
     motionDirectory.mkdirs()
     deleteConfigFiles()
