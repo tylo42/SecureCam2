@@ -15,6 +15,10 @@ trait NodeCamerasService {
   def getNodeByCameraId(cameraId: Long): Option[Node]
 
   def getCameraById(cameraId: Long): Option[Camera]
+
+  def isPortUsedOnNode(nodeId: Long, port: Long): Boolean
+
+  def isDeviceUsedOnNode(nodeId: Long, device: File): Boolean
 }
 
 class ConcreteNodeCamerasService(nodeService: NodeService, cameraService: CameraService) extends NodeCamerasService {
@@ -45,4 +49,10 @@ class ConcreteNodeCamerasService(nodeService: NodeService, cameraService: Camera
   def addCameraToNode(port: Long, device: File, description: String, nodeId: Long): Unit = {
     cameraService.addCamera(port, device, description, nodeId)
   }
+
+  def isPortUsedOnNode(nodeId: Long, port: Long): Boolean = existsOnNode(nodeId)(_.port == port)
+
+  def isDeviceUsedOnNode(nodeId: Long, device: File): Boolean = existsOnNode(nodeId)(_.device == device)
+
+  private def existsOnNode(nodeId: Long)(p: Camera => Boolean): Boolean = nodeCameras(nodeId).fold(false)(_.cameras.exists(p))
 }

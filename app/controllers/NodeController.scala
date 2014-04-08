@@ -11,9 +11,11 @@ case class newCamera(port: Long, device: String, description: String)
 class NodeController(_userRoleService: UserRoleService, nodeCamerasService: NodeCamerasService) extends Controller with Secured {
   private val cameraForm = Form(
     mapping(
-      "Port" -> longNumber(min = 1024, max = 65535),
+      "Port" -> longNumber(min = 1024, max = 65535)
+        .verifying("Port is already in use", !nodeCamerasService.isPortUsedOnNode(1, _)),
       "Device" -> text()
-        .verifying("Device does not exist", s => new File("/dev", s).exists()),
+        .verifying("Device does not exist", new File("/dev", _).exists())
+        .verifying("Device is already in use", s => !nodeCamerasService.isDeviceUsedOnNode(1, new File("/dev", s))),
       "Description" -> text(minLength = 6)
     )(newCamera.apply)(newCamera.unapply)
   )
