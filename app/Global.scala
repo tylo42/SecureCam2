@@ -12,5 +12,7 @@ object Global extends GlobalSettings {
 
   override def onStop(app: play.api.Application): Unit = {
     MotionController.stopMotion()
+    // Give motion a few seconds to shutdown and write out last picture if needed
+    Thread.sleep(5000)
   }
 }
