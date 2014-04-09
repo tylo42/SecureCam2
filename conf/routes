@@ -28,6 +28,7 @@ POST    /node/:id                   controllers.NodeController.addCameraToNode(i
 
 # Camera
 GET     /cameras/:id                controllers.CameraController.camera(id: Long)
+POST    /cameras/:id/delete         controllers.CameraController.delete(id: Long)
 
 #Video
 POST    /newVideo                   controllers.VideoController.newVideo

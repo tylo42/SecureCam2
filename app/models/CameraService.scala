@@ -9,11 +9,13 @@ import java.io.File
 case class Camera(id: Long, port: Long, device: File, description: String, node_id: Long)
 
 trait CameraService {
-  def addCamera(port: Long, device: File, description: String, nodeId: Long): Unit
+  def create(port: Long, device: File, description: String, nodeId: Long): Unit
 
   def all(): List[Camera]
 
   def get(id: Long): Option[Camera]
+
+  def delete(id: Long): Unit
 }
 
 class ConcreteCameraService extends CameraService {
@@ -46,7 +48,7 @@ class ConcreteCameraService extends CameraService {
     }
   }
 
-  def addCamera(port: Long, device: File, description: String, nodeId: Long): Unit = DB.withConnection {
+  def create(port: Long, device: File, description: String, nodeId: Long): Unit = DB.withConnection {
     implicit c => {
       SQL("insert into camera(port, device, description, node_id) values({port}, {device}, {description}, {nodeId})").on(
         'port -> port,
@@ -54,6 +56,14 @@ class ConcreteCameraService extends CameraService {
         'description -> description,
         'nodeId -> nodeId
       ).executeUpdate
+    }
+  }
+
+  def delete(id: Long): Unit = DB.withConnection {
+    implicit c => {
+      SQL("delete from camera where id = {id}").on(
+        'id -> id
+      ).executeUpdate()
     }
   }
 }

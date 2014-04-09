@@ -9,6 +9,14 @@ class CameraController(_userRoleService: UserRoleService, nodeCamerasService: No
       Ok(views.html.camera(nodeCamerasService.getCameraById(id).get, nodeCamerasService.getNodeByCameraId(id).get))
   }
 
+  def delete(id: Long) = isAdmin {
+    implicit username => implicit request => {
+      nodeCamerasService.deleteCamera(id)
+      MotionController.restartMotion()
+      Redirect(routes.NodeCamerasController.cameras())
+    }
+  }
+
   override val userRoleService = _userRoleService
 }
 

@@ -5,7 +5,6 @@ import play.api.mvc.Controller
 import play.api.data.Form
 import play.api.data.Forms._
 import java.io.File
-import scala.concurrent.ExecutionContext.Implicits.global
 
 case class newCamera(port: Long, device: String, description: String)
 
@@ -32,9 +31,7 @@ class NodeController(_userRoleService: UserRoleService, nodeCamerasService: Node
         errors => BadRequest(views.html.node(nodeCamerasService.nodeCameras(nodeId).get, errors)),
         value => {
           nodeCamerasService.addCameraToNode(value.port, new File("/dev", value.device), value.description, nodeId)
-          global.execute(new Runnable() {
-            override def run(): Unit = MotionController.restartMotion()
-          })
+          MotionController.restartMotion()
           Redirect(routes.NodeController.node(nodeId))
         }
       )

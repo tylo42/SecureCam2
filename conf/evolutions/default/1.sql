@@ -19,7 +19,7 @@ CREATE TABLE Camera(
 
 ALTER TABLE Camera ADD CONSTRAINT RefNode
     FOREIGN KEY (node_id)
-    REFERENCES Node(id);
+    REFERENCES Node(id) ON DELETE CASCADE;
 
 CREATE TABLE Video(
     id           INT UNSIGNED   AUTO_INCREMENT,
@@ -36,7 +36,7 @@ CREATE INDEX RefCam ON camera(id);
 
 ALTER TABLE Video ADD CONSTRAINT RefCam
     FOREIGN KEY (camera_id)
-    REFERENCES camera(id);
+    REFERENCES camera(id) ON DELETE CASCADE;
 
 CREATE TABLE User (
     username VARCHAR(32)  NOT NULL,
