@@ -6,8 +6,9 @@ import java.io._
 import models._
 import scala.sys.process._
 import scala.io.Source
-import scala.concurrent.ExecutionContext.Implicits._
 import models.Camera
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 class MotionController(nodeCamerasService: NodeCamerasService) extends Controller {
   val homeDirectory = new File(System.getenv("HOME"))
@@ -35,13 +36,11 @@ class MotionController(nodeCamerasService: NodeCamerasService) extends Controlle
   }
 
   def restartMotion(): Unit = {
-    global.execute(new Runnable() {
-      override def run(): Unit = {
-        stopMotion()
-        Thread.sleep(5000)
-        startMotion()
-      }
-    })
+    future {
+      stopMotion()
+      Thread.sleep(5000)
+      startMotion()
+    }
   }
 
   def writeConfig(): Unit = {
