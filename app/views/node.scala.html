@@ -1,4 +1,4 @@
-@(nodeCameras: NodeCameras, cameraForm: Form[newCamera])(implicit username: String)
+@(nodeCameras: NodeCameras, cameraForm: Form[newCamera], devices: List[String])(implicit username: String)
 
 @import helper._
 
@@ -20,7 +20,7 @@
 
 @form(routes.NodeController.addCameraToNode(nodeCameras.node.id)) {
 @inputText(cameraForm("Port"))
-@inputText(cameraForm("Device"))
+@select(cameraForm("Device"), options(devices))
 @inputText(cameraForm("Description"))
 <input type="submit" value="Create">
 }
