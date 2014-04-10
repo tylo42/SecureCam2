@@ -19,7 +19,7 @@ class Authentication(userRoleService: UserRoleService) extends Controller {
   )
 
   def check(username: String, password: String): Boolean = {
-    userRoleService.users.get(username) match {
+    userRoleService.getUser(username) match {
       case None => false
       case Some(user) => user.password == PBKDF2(password, user.salt)
     }
@@ -28,7 +28,7 @@ class Authentication(userRoleService: UserRoleService) extends Controller {
 
   def login = Action {
     implicit request =>
-      if (userRoleService.users.isEmpty) {
+      if (userRoleService.usersIsEmpty) {
         Redirect(routes.InstallationController.install())
       } else {
         Ok(views.html.login(loginForm))

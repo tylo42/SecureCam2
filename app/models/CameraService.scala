@@ -6,7 +6,7 @@ import play.api.db.DB
 import play.api.Play.current
 import java.io.File
 
-case class Camera(id: Long, port: Long, device: File, description: String, node_id: Long)
+case class Camera(id: Long, port: Long, device: File, description: String, nodeId: Long)
 
 trait CameraService {
   def create(port: Long, device: File, description: String, nodeId: Long): Unit
@@ -24,8 +24,8 @@ class ConcreteCameraService extends CameraService {
       long("port") ~
       str("device") ~
       str("description") ~
-      long("node_id") map {
-      case id ~ port ~ device ~ description ~ node_id => Camera(id, port, new File(device), description, node_id)
+      long("nodeId") map {
+      case id ~ port ~ device ~ description ~ nodeId => Camera(id, port, new File(device), description, nodeId)
     }
   }
 
@@ -50,7 +50,7 @@ class ConcreteCameraService extends CameraService {
 
   def create(port: Long, device: File, description: String, nodeId: Long): Unit = DB.withConnection {
     implicit c => {
-      SQL("insert into camera(port, device, description, node_id) values({port}, {device}, {description}, {nodeId})").on(
+      SQL("insert into camera(port, device, description, nodeId) values({port}, {device}, {description}, {nodeId})").on(
         'port -> port,
         'device -> device.getAbsolutePath,
         'description -> description,

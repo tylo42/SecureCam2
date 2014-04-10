@@ -4,16 +4,17 @@
 
 @main("Installation", None) {
 
-<h2>Create first user</h2>
+    <h2>Create first user</h2>
 
-@userForm.globalError.map { error =>
-<dd class="error">@error.message</dd>
-}
+    @userForm.globalError.map { error =>
+    <dd class="error">@error.message</dd>
+    }
 
-@form(routes.InstallationController.firstUser) {
-@inputText(userForm("Username"), 'readonly -> "readonly")
-@inputPassword(userForm("Password"))
-@inputPassword(userForm("Confirm password"))
-<input type="submit" value="Create">
-}
+    @form(routes.InstallationController.firstUser) {
+        @inputText(userForm("Username"), 'readonly -> "readonly")
+        @inputPassword(userForm("Password"))
+        @inputPassword(userForm("Confirm password"))
+        <input type="hidden" name="Role" value="@userForm.data.get("Role")" />
+        <input type="submit" value="Create">
+    }
 }

@@ -6,9 +6,9 @@ import play.api.data.Form
 import play.Logger
 import models._
 
-case class VideoInsert(time: Long, video: String, event: Long, camera_id: Long)
+case class VideoInsert(time: Long, video: String, event: Long, cameraId: Long)
 
-case class PictureInsert(picture: String, event: Long, camera_id: Long)
+case class PictureInsert(picture: String, event: Long, cameraId: Long)
 
 class VideoController(_userRoleService: UserRoleService, videoService: VideoService) extends Controller with Secured {
   val videoForm = Form(
@@ -16,7 +16,7 @@ class VideoController(_userRoleService: UserRoleService, videoService: VideoServ
       "time" -> longNumber(),
       "video" -> text(),
       "event" -> longNumber(),
-      "camera_id" -> longNumber()
+      "cameraId" -> longNumber()
     )(VideoInsert.apply)(VideoInsert.unapply)
   )
 
@@ -24,7 +24,7 @@ class VideoController(_userRoleService: UserRoleService, videoService: VideoServ
     mapping(
       "picture" -> text(),
       "event" -> longNumber(),
-      "camera_id" -> longNumber()
+      "cameraId" -> longNumber()
     )(PictureInsert.apply)(PictureInsert.unapply)
   )
 
@@ -34,7 +34,7 @@ class VideoController(_userRoleService: UserRoleService, videoService: VideoServ
         errors => BadRequest,
         value => {
           Logger.info("Adding video: " + value)
-          videoService.insertVideo(value.time, value.video, value.event, value.camera_id)
+          videoService.insertVideo(value.time, value.video, value.event, value.cameraId)
           Ok
         }
       )
@@ -46,7 +46,7 @@ class VideoController(_userRoleService: UserRoleService, videoService: VideoServ
         errors => BadRequest,
         value => {
           Logger.info("Adding picture: " + value)
-          videoService.insertPicture(value.picture, value.event, value.camera_id)
+          videoService.insertPicture(value.picture, value.event, value.cameraId)
           Ok
         }
       )

@@ -27,7 +27,7 @@ class ConcreteNodeCamerasService(nodeService: NodeService, cameraService: Camera
   def all(): List[NodeCameras] = {
     val cameras = cameraService.all()
     nodeService.all().map(node => {
-      NodeCameras(node, cameras.filter(_.node_id == node.id))
+      NodeCameras(node, cameras.filter(_.nodeId == node.id))
     })
   }
 
@@ -35,14 +35,14 @@ class ConcreteNodeCamerasService(nodeService: NodeService, cameraService: Camera
     val cameras = cameraService.all()
     nodeService.get(nodeId) match {
       case None => None
-      case Some(node) => Some(NodeCameras(node, cameras.filter(_.node_id == node.id)))
+      case Some(node) => Some(NodeCameras(node, cameras.filter(_.nodeId == node.id)))
     }
   }
 
   def getNodeByCameraId(id: Long): Option[Node] = {
     cameraService.get(id) match {
       case None => None
-      case Some(camera) => nodeService.get(camera.node_id)
+      case Some(camera) => nodeService.get(camera.nodeId)
     }
   }
 

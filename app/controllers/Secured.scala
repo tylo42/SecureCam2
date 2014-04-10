@@ -30,7 +30,7 @@ trait Secured {
   private def username(request: RequestHeader): Option[String] = {
     request.session.get(Security.username).flatMap {
       username =>
-        if (userRoleService.users.exists(username)) {
+        if (userRoleService.userExists(username)) {
           Some(username)
         } else {
           None

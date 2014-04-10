@@ -13,12 +13,12 @@ CREATE TABLE Camera(
     port        INT UNSIGNED    NOT NULL,
     device      VARCHAR(255)    NOT NULL,
     description	VARCHAR(255),
-    node_id     INT UNSIGNED    NOT NULL,
+    nodeId     INT UNSIGNED    NOT NULL,
     PRIMARY KEY(id)
 );
 
 ALTER TABLE Camera ADD CONSTRAINT RefNode
-    FOREIGN KEY (node_id)
+    FOREIGN KEY (nodeId)
     REFERENCES Node(id) ON DELETE CASCADE;
 
 CREATE TABLE Video(
@@ -28,22 +28,23 @@ CREATE TABLE Video(
     picture      VARCHAR(255),
     flagged      boolean        NOT NULL   DEFAULT 0,
     event        INT UNSIGNED   NOT NULL,
-    camera_id    INT UNSIGNED   NOT NULL,
+    cameraId    INT UNSIGNED   NOT NULL,
     PRIMARY KEY(id)
 );
 
 CREATE INDEX RefCam ON camera(id);
 
 ALTER TABLE Video ADD CONSTRAINT RefCam
-    FOREIGN KEY (camera_id)
+    FOREIGN KEY (cameraId)
     REFERENCES camera(id) ON DELETE CASCADE;
 
 CREATE TABLE User (
+    id       INT UNSIGNED AUTO_INCREMENT,
     username VARCHAR(32)  NOT NULL,
     password VARCHAR(64)  NOT NULL,
     salt     VARCHAR(64)  NOT NULL,
-    role_id  INT UNSIGNED NOT NULL,
-    PRIMARY KEY(username)
+    roleId  INT UNSIGNED NOT NULL,
+    PRIMARY KEY(id)
 );
 
 CREATE TABLE Role (
@@ -53,7 +54,7 @@ CREATE TABLE Role (
 );
 
 ALTER TABLE User ADD CONSTRAINT RefRole
-    FOREIGN KEY (role_id)
+    FOREIGN KEY (roleId)
     REFERENCES Role(id);
 
 INSERT INTO Role(name) VALUES('view');

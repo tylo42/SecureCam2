@@ -6,7 +6,7 @@ import play.Logger
 import anorm._
 import anorm.SqlParser._
 
-case class User(username: String, password: String, salt: String, role_id: Long)
+case class User(id: Long, username: String, password: String, salt: String, roleId: Long)
 
 trait UserService {
   def all(): List[User]
@@ -17,18 +17,19 @@ trait UserService {
 
   def exists(username: String): Boolean
 
-  def create(user: User): Unit
+  def create(username: String, password: String, salt: String, roleId: Long): Unit
 
   def delete(username: String): Unit
 }
 
 class ConcreteUserService extends UserService {
   private val userParser: RowParser[User] = {
+    long("id") ~
     str("username") ~
       str("password") ~
       str("salt") ~
-      long("role_id") map {
-      case username ~ password ~ salt ~ role_id => User(username, password, salt, role_id)
+      long("roleId") map {
+      case id ~ username ~ password ~ salt ~ roleId => User(id, username, password, salt, roleId)
     }
   }
 
@@ -51,14 +52,14 @@ class ConcreteUserService extends UserService {
 
   def exists(username: String): Boolean = get(username).isDefined
 
-  def create(user: User): Unit = DB.withConnection {
+  def create(username: String, password: String, salt: String, roleId: Long): Unit = DB.withConnection {
     implicit c =>
-      Logger.info("Created user: " + user.username)
-      SQL("insert into user (username, password, salt, role_id) values ({username}, {password}, {salt}, {role_id})").on(
-        'username -> user.username,
-        'password -> user.password,
-        'salt -> user.salt,
-        'role_id -> user.role_id
+      Logger.info("Created user: " + username)
+      SQL("insert into user (username, password, salt, roleId) values ({username}, {password}, {salt}, {roleId})").on(
+        'username -> username,
+        'password -> password,
+        'salt -> salt,
+        'roleId -> roleId
       ).executeUpdate()
   }
 
