@@ -22,7 +22,10 @@ class NodeController(_userRoleService: UserRoleService, nodeCamerasService: Node
 
   def node(id: Long) = isAuthenticated {
     implicit username => implicit request => {
-      Ok(views.html.node(nodeCamerasService.nodeCameras(id).get, cameraForm, openDevices(id)))
+      nodeCamerasService.nodeCameras(id) match {
+        case Some(nodeCameras) => Ok(views.html.node(nodeCameras, cameraForm, openDevices(id)))
+        case _ => Redirect(routes.NodeCamerasController.cameras())
+      }
     }
   }
 

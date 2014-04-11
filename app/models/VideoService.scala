@@ -41,14 +41,13 @@ class ConcreteVideoService extends VideoService {
 
   def getBetweenInterval(interval: Interval, flagged: Option[Boolean] = None): List[Video] = DB.withConnection {
     implicit c => {
-      if (flagged.isDefined) {
-        SQL("select * from video where {start} <= time and time <= {end} and flagged = {flagged} order by time").on(
+      flagged match {
+        case Some(f) => SQL("select * from video where {start} <= time and time <= {end} and flagged = {flagged} order by time").on(
           'start -> interval.getStart,
           'end -> interval.getEnd,
-          'flagged -> flagged.get
+          'flagged -> f
         ).as(videosParser)
-      } else {
-        SQL("select * from video where {start} <= time and time <= {end} order by time").on(
+        case _ => SQL("select * from video where {start} <= time and time <= {end} order by time").on(
           'start -> interval.getStart,
           'end -> interval.getEnd
         ).as(videosParser)
