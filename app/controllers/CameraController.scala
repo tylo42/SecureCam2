@@ -3,7 +3,7 @@ package controllers
 import play.api.mvc._
 import models._
 
-class CameraController(_userRoleService: UserRoleService, nodeCamerasService: NodeCamerasService) extends Controller with Secured {
+class CameraController(_userService: UserService, nodeCamerasService: NodeCamerasService) extends Controller with Secured {
   def camera(id: Long) = isAuthenticated {
     implicit username => implicit request =>
       (nodeCamerasService.getCameraById(id), nodeCamerasService.getNodeByCameraId(id)) match {
@@ -20,7 +20,7 @@ class CameraController(_userRoleService: UserRoleService, nodeCamerasService: No
     }
   }
 
-  override val userRoleService = _userRoleService
+  override val userService = _userService
 }
 
-object CameraController extends CameraController(new ConcreteUserRoleService(new ConcreteUserService, new ConcreteRoleService()), new ConcreteNodeCamerasService(new ConcreteNodeService(), new ConcreteCameraService()))
+object CameraController extends CameraController(new ConcreteUserService(new ConcreteRoleService()), new ConcreteNodeCamerasService(new ConcreteNodeService(), new ConcreteCameraService()))

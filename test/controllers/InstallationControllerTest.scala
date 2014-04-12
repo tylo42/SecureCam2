@@ -5,17 +5,17 @@ import play.api.test.Helpers._
 
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
-import models.{User, UserRoleService}
+import models.{User, UserService}
 
 class InstallationControllerTest extends Specification with Mockito {
-  val userRoleService = mock[UserRoleService]
+  val userService = mock[UserService]
 
-  val testObject = new InstallationController(userRoleService)
+  val testObject = new InstallationController(userService)
 
 
   "Installation controller install" should {
     "redirect home" in {
-      userRoleService.usersIsEmpty returns false
+      userService.isEmpty returns false
 
       val result = testObject.install()(FakeRequest())
 
@@ -24,7 +24,7 @@ class InstallationControllerTest extends Specification with Mockito {
     }
 
     "load install page" in {
-      userRoleService.usersIsEmpty returns true
+      userService.isEmpty returns true
 
       val result = testObject.install()(FakeRequest())
 
@@ -36,28 +36,28 @@ class InstallationControllerTest extends Specification with Mockito {
 
   "Installation controller firstUser" should {
     "redirect home without created user" in {
-      userRoleService.usersIsEmpty returns false
+      userService.isEmpty returns false
 
       val result = testObject.firstUser()(FakeRequest())
 
       status(result) must equalTo(SEE_OTHER)
       redirectLocation(result) must beSome("/")
 
-      there was no(userRoleService).createUser(anyString, anyString, anyString)
+      there was no(userService).create(anyString, anyString, anyString)
     }
 
     "empty post" in {
-      userRoleService.usersIsEmpty returns true
+      userService.isEmpty returns true
 
       val result = testObject.firstUser()(FakeRequest())
 
       status(result) must equalTo(BAD_REQUEST)
 
-      there was no(userRoleService).createUser(anyString, anyString, anyString)
+      there was no(userService).create(anyString, anyString, anyString)
     }
 
     "short username" in new WithApplication {
-      userRoleService.usersIsEmpty returns true
+      userService.isEmpty returns true
 
       val result = testObject.firstUser()(FakeRequest(POST, "post").withFormUrlEncodedBody(
         "Username" -> "a",
@@ -67,11 +67,11 @@ class InstallationControllerTest extends Specification with Mockito {
 
       status(result) must equalTo(BAD_REQUEST)
 
-      there was no(userRoleService).createUser(anyString, anyString, anyString)
+      there was no(userService).create(anyString, anyString, anyString)
     }
 
     "passwords to not match" in new WithApplication {
-      userRoleService.usersIsEmpty returns true
+      userService.isEmpty returns true
 
       val result = testObject.firstUser()(FakeRequest(POST, "post").withFormUrlEncodedBody(
         "Username" -> "admin",
@@ -81,11 +81,11 @@ class InstallationControllerTest extends Specification with Mockito {
 
       status(result) must equalTo(BAD_REQUEST)
 
-      there was no(userRoleService).createUser(anyString, anyString, anyString)
+      there was no(userService).create(anyString, anyString, anyString)
     }
 
     "create first user" in new WithApplication {
-      userRoleService.usersIsEmpty returns true
+      userService.isEmpty returns true
 
       val result = testObject.firstUser()(FakeRequest(POST, "post").withFormUrlEncodedBody(
         "Username" -> "not_admin",
@@ -97,7 +97,7 @@ class InstallationControllerTest extends Specification with Mockito {
       status(result) must equalTo(SEE_OTHER)
       redirectLocation(result) must beSome("/")
 
-      there was one(userRoleService).createUser("admin", "password", "super")
+      there was one(userService).create("admin", "password", "super")
     }
   }
 }

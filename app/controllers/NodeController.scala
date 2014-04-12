@@ -8,7 +8,7 @@ import java.io.File
 
 case class newCamera(port: Long, device: String, description: String)
 
-class NodeController(_userRoleService: UserRoleService, nodeCamerasService: NodeCamerasService) extends Controller with Secured {
+class NodeController(_userService: UserService, nodeCamerasService: NodeCamerasService) extends Controller with Secured {
   private val cameraForm = Form(
     mapping(
       "Port" -> longNumber(min = 1024, max = 65535)
@@ -47,7 +47,7 @@ class NodeController(_userRoleService: UserRoleService, nodeCamerasService: Node
     .map(_.getAbsolutePath)
     .toList
 
-  override val userRoleService = _userRoleService
+  override val userService = _userService
 }
 
-object NodeController extends NodeController(new ConcreteUserRoleService(new ConcreteUserService, new ConcreteRoleService()), new ConcreteNodeCamerasService(new ConcreteNodeService(), new ConcreteCameraService()))
+object NodeController extends NodeController(new ConcreteUserService(new ConcreteRoleService()), new ConcreteNodeCamerasService(new ConcreteNodeService(), new ConcreteCameraService()))

@@ -8,7 +8,7 @@ import models._
 import io.github.nremond.PBKDF2
 import scala.Some
 
-class Authentication(userRoleService: UserRoleService) extends Controller {
+class Authentication(userService: UserService) extends Controller {
   val loginForm = Form(
     tuple(
       "username" -> text,
@@ -19,7 +19,7 @@ class Authentication(userRoleService: UserRoleService) extends Controller {
   )
 
   def check(username: String, password: String): Boolean = {
-    userRoleService.getUser(username) match {
+    userService.get(username) match {
       case None => false
       case Some(user) => user.password == PBKDF2(password, user.salt)
     }
@@ -28,7 +28,7 @@ class Authentication(userRoleService: UserRoleService) extends Controller {
 
   def login = Action {
     implicit request =>
-      if (userRoleService.usersIsEmpty) {
+      if (userService.isEmpty) {
         Redirect(routes.InstallationController.install())
       } else {
         Ok(views.html.login(loginForm))
@@ -53,4 +53,4 @@ class Authentication(userRoleService: UserRoleService) extends Controller {
   }
 }
 
-object Authentication extends Authentication(new ConcreteUserRoleService(new ConcreteUserService, new ConcreteRoleService())) {}
+object Authentication extends Authentication(new ConcreteUserService(new ConcreteRoleService())) {}

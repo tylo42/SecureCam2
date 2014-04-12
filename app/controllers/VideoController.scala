@@ -10,7 +10,7 @@ case class VideoInsert(time: Long, video: String, event: Long, cameraId: Long)
 
 case class PictureInsert(picture: String, event: Long, cameraId: Long)
 
-class VideoController(_userRoleService: UserRoleService, videoService: VideoService) extends Controller with Secured {
+class VideoController(_userService: UserService, videoService: VideoService) extends Controller with Secured {
   val videoForm = Form(
     mapping(
       "time" -> longNumber(),
@@ -58,7 +58,7 @@ class VideoController(_userRoleService: UserRoleService, videoService: VideoServ
     }
   }
 
-  override val userRoleService = _userRoleService
+  override val userService = _userService
 }
 
-object VideoController extends VideoController(new ConcreteUserRoleService(new ConcreteUserService(), new ConcreteRoleService()), new ConcreteVideoService())
+object VideoController extends VideoController(new ConcreteUserService(new ConcreteRoleService()), new ConcreteVideoService())

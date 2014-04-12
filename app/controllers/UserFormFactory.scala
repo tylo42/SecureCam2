@@ -2,15 +2,15 @@ package controllers
 
 import play.api.data.Form
 import play.api.data.Forms._
-import models.UserRoleService
+import models.UserService
 
 case class UserRegistration(username: String, password: String, confirmPassword: String, role: String)
 
 object UserFormFactory {
-  def apply(userRoleService: UserRoleService) = Form(
+  def apply(userService: UserService) = Form(
     mapping(
       "Username" -> text(minLength = 3, maxLength = 32)
-        .verifying("Username is already in use", !userRoleService.userExists(_))
+        .verifying("Username is already in use", !userService.exists(_))
         .verifying("May not contain whitespace", !containsWhitespace(_)),
       "Password" -> text(minLength = 6)
         .verifying("May not contain whitespace", !containsWhitespace(_)),

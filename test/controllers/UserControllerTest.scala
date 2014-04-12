@@ -5,29 +5,29 @@ import play.api.test.Helpers._
 
 import org.specs2.mutable.Specification
 import org.specs2.mock.Mockito
-import models.{UserRole, UserRoleService}
+import models.{User, UserService}
 import play.api.libs.iteratee.Enumerator
 import play.api.mvc.Security
 import play.mvc.Http.HeaderNames
 
 class UserControllerTest extends Specification with Mockito {
-  val userRoleService = mock[UserRoleService]
+  val userService = mock[UserService]
 
-  val testObject = new UserController(userRoleService)
+  val testObject = new UserController(userService)
 
   val fakeExistingUsers = List(
-    UserRole("admin", "super", false),
-    UserRole("user", "view", true)
+    User(1, "admin", "hashed password", "salt", "role1"),
+    User(2, "user1", "hashed password", "salt", "role2")
   )
 
   "Users" should {
     "redirect to / for non-admin users" in {
       "create admin user" in new WithApplication(new FakeApplication(additionalConfiguration = Map("application.secret" -> "test"))) {
-        userRoleService.userExists("username") returns true
-        userRoleService.isAdmin("username") returns false
+        userService.exists("username") returns true
+        userService.isAdmin("username") returns false
 
-        userRoleService.userRoles() returns fakeExistingUsers
-        userRoleService.userExists("newUser") returns false
+        userService.all() returns fakeExistingUsers
+        userService.exists("newUser") returns false
 
         val requestBody = Enumerator("".getBytes) andThen Enumerator.eof
         val result = requestBody |>>> testObject.users()(FakeRequest().withSession(Security.username -> "username"))
@@ -35,17 +35,17 @@ class UserControllerTest extends Specification with Mockito {
         status(result) must equalTo(SEE_OTHER)
         redirectLocation(result) must beSome("/")
 
-        there was no(userRoleService).userRoles()
+        there was no(userService).all()
       }
     }
 
     "show users page" in {
       "create admin user" in new WithApplication(new FakeApplication(additionalConfiguration = Map("application.secret" -> "test"))) {
-        userRoleService.userExists("username") returns true
-        userRoleService.isAdmin("username") returns true
+        userService.exists("username") returns true
+        userService.isAdmin("username") returns true
 
-        userRoleService.userRoles() returns fakeExistingUsers
-        userRoleService.userExists("newUser") returns false
+        userService.all() returns fakeExistingUsers
+        userService.exists("newUser") returns false
 
         val requestBody = Enumerator("".getBytes) andThen Enumerator.eof
         val result = requestBody |>>> testObject.users()(FakeRequest().withSession(Security.username -> "username"))
@@ -53,18 +53,18 @@ class UserControllerTest extends Specification with Mockito {
         status(result) must equalTo(OK)
         contentType(result) must beSome("text/html")
 
-        there was one(userRoleService).userRoles()
+        there was one(userService).all()
       }
     }
   }
 
   "New user" should {
     "redirect to / for non-admin users" in new WithApplication(new FakeApplication(additionalConfiguration = Map("application.secret" -> "test"))) {
-      userRoleService.userExists("username") returns true
-      userRoleService.isAdmin("username") returns false
+      userService.exists("username") returns true
+      userService.isAdmin("username") returns false
 
-      userRoleService.userRoles() returns fakeExistingUsers
-      userRoleService.userExists("newUser") returns false
+      userService.all() returns fakeExistingUsers
+      userService.exists("newUser") returns false
 
       val requestBody = Enumerator("Username=newUser&Password=password&Confirm password=password&Role=admin".getBytes) andThen Enumerator.eof
       val result = requestBody |>>> testObject.newUser()(FakeRequest(POST, "post")
@@ -75,15 +75,15 @@ class UserControllerTest extends Specification with Mockito {
       status(result) must equalTo(SEE_OTHER)
       redirectLocation(result) must beSome("/")
 
-      there was no(userRoleService).createUser(anyString, anyString, anyString)
+      there was no(userService).create(anyString, anyString, anyString)
     }
 
     "create admin user" in new WithApplication(new FakeApplication(additionalConfiguration = Map("application.secret" -> "test"))) {
-      userRoleService.userExists("username") returns true
-      userRoleService.isAdmin("username") returns true
+      userService.exists("username") returns true
+      userService.isAdmin("username") returns true
 
-      userRoleService.userRoles() returns fakeExistingUsers
-      userRoleService.userExists("newUser") returns false
+      userService.all() returns fakeExistingUsers
+      userService.exists("newUser") returns false
 
       val requestBody = Enumerator("Username=newUser&Password=password&Confirm password=password&Role=admin".getBytes) andThen Enumerator.eof
       val result = requestBody |>>> testObject.newUser()(FakeRequest(POST, "post")
@@ -94,14 +94,14 @@ class UserControllerTest extends Specification with Mockito {
       status(result) must equalTo(SEE_OTHER)
       redirectLocation(result) must beSome("/users")
 
-      there was one(userRoleService).createUser("newUser", "password", "admin")
+      there was one(userService).create("newUser", "password", "admin")
     }
   }
 
   "Delete user" should {
     "redirect to / for non-admins" in new WithApplication(new FakeApplication(additionalConfiguration = Map("application.secret" -> "test"))) {
-      userRoleService.userExists("username") returns true
-      userRoleService.isAdmin("username") returns false
+      userService.exists("username") returns true
+      userService.isAdmin("username") returns false
 
       val requestBody = Enumerator("".getBytes) andThen Enumerator.eof
       val result = requestBody |>>> testObject.deleteUser("username")(FakeRequest().withSession(Security.username -> "username"))
@@ -109,14 +109,14 @@ class UserControllerTest extends Specification with Mockito {
       status(result) must equalTo(SEE_OTHER)
       redirectLocation(result) must beSome("/")
 
-      there was no(userRoleService).deleteUser("username")
-      there was no(userRoleService).deleteUser("username")
+      there was no(userService).delete("username")
+      there was no(userService).delete("username")
     }
 
 
     "delete user" in new WithApplication(new FakeApplication(additionalConfiguration = Map("application.secret" -> "test"))) {
-      userRoleService.userExists("username") returns true
-      userRoleService.isAdmin("username") returns true
+      userService.exists("username") returns true
+      userService.isAdmin("username") returns true
 
       val requestBody = Enumerator("".getBytes) andThen Enumerator.eof
       val result = requestBody |>>> testObject.deleteUser("username")(FakeRequest().withSession(Security.username -> "username"))
@@ -124,7 +124,7 @@ class UserControllerTest extends Specification with Mockito {
       status(result) must equalTo(SEE_OTHER)
       redirectLocation(result) must beSome("/users")
 
-      there was one(userRoleService).deleteUser("username")
+      there was one(userService).delete("username")
     }
   }
 }

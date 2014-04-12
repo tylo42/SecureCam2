@@ -1,4 +1,4 @@
-@(userRoles: List[UserRole])(implicit username: String)
+@(users: List[(User, Boolean)])(implicit username: String)
 
 @import helper._
 
@@ -8,14 +8,14 @@
 
         <table>
             <th>Username</th><th>Role</th><th></th>
-            @userRoles.map { userRole =>
+            @users.map { user =>
             <tr>
-                <td>@userRole.username</td>
-                <td>@userRole.role.capitalize</td>
+                <td>@user._1.username</td>
+                <td>@user._1.role.capitalize</td>
                 <td>
-                @form(routes.UserController.deleteUser(userRole.username)) {
-                    <span title=@if(!userRole.canDelete) { "Super user can not be deleted" } else { "" }>
-                    <input type="submit" value="Remove user" @if(!userRole.canDelete) { disabled }>
+                @form(routes.UserController.deleteUser(user._1.username)) {
+                    <span title=@if(!user._2) { "Super user can not be deleted" } else { "" }>
+                    <input type="submit" value="Remove user" @if(!user._2) { disabled }>
                     </span>
                 }
                 </td>
