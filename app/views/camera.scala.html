@@ -1,12 +1,16 @@
-@(camera: Camera, node: Node)(implicit username: String)
+@(camera: Camera, node: Node, maybeVideo: Option[Video])(implicit username: String)
 
 @import helper._
 
 @main("Camera @camera.id", Some(username)) {
     <h1><a href="@routes.NodeCamerasController.cameras">Cameras</a> &gt; <a href="@routes.NodeController.node(node.id)">@node.hostname</a> &gt; @camera.description</h1>
 
-    <p>@node.hostname:@camera.port</p>
-    <p>@camera.device</p>
+    @for(video <- maybeVideo; picture <- video.picture) {
+        <img class="picture" src="@routes.VideoController.assetAt(picture)" />
+    }
+
+    <p>Live view: @node.hostname:@camera.port</p>
+    <p>Device: @camera.device</p>
 
     @form(routes.CameraController.delete(camera.id)) {
         <input type="submit" value="Delete">

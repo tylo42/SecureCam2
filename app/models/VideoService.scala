@@ -11,6 +11,8 @@ case class Video(id: Long, time: DateTime, video: String, picture: Option[String
 trait VideoService {
   def getBetweenInterval(interval: Interval, flagged: Option[Boolean] = None): List[Video]
 
+  def getMostRecentVideo(cameraId: Long): Option[Video]
+
   def insertVideo(time: Long, video: String, event: Long, cameraId: Long): Unit
 
   def insertPicture(picture: String, event: Long, cameraId: Long): Unit
@@ -52,6 +54,17 @@ class ConcreteVideoService extends VideoService {
           'start -> interval.getStart,
           'end -> interval.getEnd
         ).as(videosParser)
+      }
+    }
+  }
+
+  def getMostRecentVideo(cameraId: Long): Option[Video] = DB.withConnection {
+    implicit c => {
+      SQL("select video.*,camera.description from video inner join camera on video.cameraId=camera.id where cameraId = {cameraId} and picture is not null").on(
+        'cameraId -> cameraId
+      ).as(videosParser) match {
+        case Nil => None
+        case l   => Some(l.head)
       }
     }
   }
