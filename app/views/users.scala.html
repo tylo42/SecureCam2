@@ -1,40 +1,30 @@
-@(users: List[User], userForm: Form[UserRegistration])(implicit username: String)
+@(userRoles: List[UserRole])(implicit username: String)
 
 @import helper._
 
 @main("Users", Some(username)) {
+    <div id="users">
+        <h1>User management</h1>
 
+        <table>
+            <th>Username</th><th>Role</th><th></th>
+            @userRoles.map { userRole =>
+            <tr>
+                <td>@userRole.username</td>
+                <td>@userRole.role.capitalize</td>
+                <td>
+                @form(routes.UserController.deleteUser(userRole.username)) {
+                    <span title=@if(!userRole.canDelete) { "Super user can not be deleted" } else { "" }>
+                    <input type="submit" value="Remove user" @if(!userRole.canDelete) { disabled }>
+                    </span>
+                }
+                </td>
+            </tr>
+            }
+        </table>
 
-<h1>@users.size @if(users.size == 1) { user } else { users }</h1>
-
-<ul>
-    @users.map { user =>
-    <li>
-        @user.username
-        @user.password
-        @user.salt
-        @user.roleId
-
-        @form(routes.UserController.deleteUser(user.username)) {
-        <input type="submit" value="Delete">
+        @form(routes.UserController.addUser()) {
+            <input type="submit" value="Add user">
         }
-    </li>
-    }
-</ul>
-
-<h2>Add a new User</h2>
-
-@userForm.globalError.map { error =>
-<div class="error flash-message">
-    <p>@error.message</p>
-</div>
-}
-
-@form(routes.UserController.newUser) {
-@inputText(userForm("Username"))
-@inputPassword(userForm("Password"))
-@inputPassword(userForm("Confirm password"))
-@select(userForm("Role"), options(("view", "View"), ("admin", "Admin")))
-<input type="submit" value="Create">
-}
+    </div>
 }

@@ -7,14 +7,15 @@ class UserController(_userRoleService: UserRoleService) extends Controller with 
   private val userForm = UserFormFactory(_userRoleService)
 
   def users = isAdmin {
-    implicit username => implicit request =>
-      Ok(views.html.users(userRoleService.allUsers(), userForm))
+    implicit username => implicit request => {
+      Ok(views.html.users(userRoleService.userRoles()))
+    }
   }
 
-  def newUser = isAdmin {
+  def newUser() = isAdmin {
     implicit username => implicit request =>
       userForm.bindFromRequest().fold(
-        errors => BadRequest(views.html.users(userRoleService.allUsers(), errors)),
+        errors => BadRequest(views.html.addUser(errors)),
         value => {
           createUser(value)
           Redirect(routes.UserController.users())
@@ -22,10 +23,17 @@ class UserController(_userRoleService: UserRoleService) extends Controller with 
       )
   }
 
+  def addUser() = isAdmin {
+    implicit username => implicit request => {
+      Ok(views.html.addUser(userForm))
+    }
+  }
+
   def deleteUser(username: String) = isAdmin {
-    signedInUser => implicit request =>
+    signedInUser => implicit request => {
       userRoleService.deleteUser(username)
       Redirect(routes.UserController.users())
+    }
   }
 
   private def createUser(value: UserRegistration) = {

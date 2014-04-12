@@ -3,6 +3,8 @@ package models
 import scala.Some
 import io.github.nremond.PBKDF2
 
+case class UserRole(username: String, role: String, canDelete: Boolean)
+
 trait UserRoleService {
   def createUser(username: String, password: String, role: String): Unit
 
@@ -15,6 +17,8 @@ trait UserRoleService {
   def userExists(username: String): Boolean
 
   def usersIsEmpty(): Boolean
+
+  def userRoles(): List[UserRole]
 
   def isSuper(implicit username: String): Boolean
 
@@ -43,6 +47,12 @@ class ConcreteUserRoleService(userService: UserService, roleService: RoleService
   def userExists(username: String): Boolean = userService.exists(username)
 
   def usersIsEmpty(): Boolean = userService.isEmpty
+
+  def userRoles(): List[UserRole] = {
+    userService.all().map(user => {
+      UserRole(user.username, roleService.getName(user.roleId).get, !isSuper(user.username))
+    })
+  }
 
   def isSuper(implicit username: String): Boolean = isRole("super")
 

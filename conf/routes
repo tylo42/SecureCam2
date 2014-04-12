@@ -16,6 +16,7 @@ GET     /logout                     controllers.Authentication.logout
 
 # User
 GET     /users                      controllers.UserController.users
+GET     /addUser                    controllers.UserController.addUser
 POST    /users                      controllers.UserController.newUser
 POST    /users/:id/delete           controllers.UserController.deleteUser(id: String)
 

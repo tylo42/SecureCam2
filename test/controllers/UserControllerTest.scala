@@ -5,7 +5,7 @@ import play.api.test.Helpers._
 
 import org.specs2.mutable.Specification
 import org.specs2.mock.Mockito
-import models.{UserRoleService, User}
+import models.{UserRole, UserRoleService}
 import play.api.libs.iteratee.Enumerator
 import play.api.mvc.Security
 import play.mvc.Http.HeaderNames
@@ -16,8 +16,8 @@ class UserControllerTest extends Specification with Mockito {
   val testObject = new UserController(userRoleService)
 
   val fakeExistingUsers = List(
-    User(1, "admin", "hashed password", "salt", 255),
-    User(2, "user1", "hashed password", "salt", 255)
+    UserRole("admin", "super", false),
+    UserRole("user", "view", true)
   )
 
   "Users" should {
@@ -26,7 +26,7 @@ class UserControllerTest extends Specification with Mockito {
         userRoleService.userExists("username") returns true
         userRoleService.isAdmin("username") returns false
 
-        userRoleService.allUsers() returns fakeExistingUsers
+        userRoleService.userRoles() returns fakeExistingUsers
         userRoleService.userExists("newUser") returns false
 
         val requestBody = Enumerator("".getBytes) andThen Enumerator.eof
@@ -35,7 +35,7 @@ class UserControllerTest extends Specification with Mockito {
         status(result) must equalTo(SEE_OTHER)
         redirectLocation(result) must beSome("/")
 
-        there was no(userRoleService).allUsers()
+        there was no(userRoleService).userRoles()
       }
     }
 
@@ -44,7 +44,7 @@ class UserControllerTest extends Specification with Mockito {
         userRoleService.userExists("username") returns true
         userRoleService.isAdmin("username") returns true
 
-        userRoleService.allUsers() returns fakeExistingUsers
+        userRoleService.userRoles() returns fakeExistingUsers
         userRoleService.userExists("newUser") returns false
 
         val requestBody = Enumerator("".getBytes) andThen Enumerator.eof
@@ -53,7 +53,7 @@ class UserControllerTest extends Specification with Mockito {
         status(result) must equalTo(OK)
         contentType(result) must beSome("text/html")
 
-        there was one(userRoleService).allUsers()
+        there was one(userRoleService).userRoles()
       }
     }
   }
@@ -63,7 +63,7 @@ class UserControllerTest extends Specification with Mockito {
       userRoleService.userExists("username") returns true
       userRoleService.isAdmin("username") returns false
 
-      userRoleService.allUsers() returns fakeExistingUsers
+      userRoleService.userRoles() returns fakeExistingUsers
       userRoleService.userExists("newUser") returns false
 
       val requestBody = Enumerator("Username=newUser&Password=password&Confirm password=password&Role=admin".getBytes) andThen Enumerator.eof
@@ -82,7 +82,7 @@ class UserControllerTest extends Specification with Mockito {
       userRoleService.userExists("username") returns true
       userRoleService.isAdmin("username") returns true
 
-      userRoleService.allUsers() returns fakeExistingUsers
+      userRoleService.userRoles() returns fakeExistingUsers
       userRoleService.userExists("newUser") returns false
 
       val requestBody = Enumerator("Username=newUser&Password=password&Confirm password=password&Role=admin".getBytes) andThen Enumerator.eof

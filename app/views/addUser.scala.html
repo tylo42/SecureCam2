@@ -1,0 +1,21 @@
+@(userForm: Form[UserRegistration])(implicit username: String)
+
+@import helper._
+
+@main("Users", Some(username)) {
+    <h2>Add a new User</h2>
+
+    @userForm.globalError.map { error =>
+    <div class="error flash-message">
+        <p>@error.message</p>
+    </div>
+    }
+
+    @form(routes.UserController.newUser) {
+        @inputText(userForm("Username"))
+        @inputPassword(userForm("Password"))
+        @inputPassword(userForm("Confirm password"))
+        @select(userForm("Role"), options(("view", "View"), ("admin", "Admin")))
+        <input type="submit" value="Create">
+    }
+}
