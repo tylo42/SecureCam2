@@ -6,7 +6,7 @@ import anorm.SqlParser._
 import play.api.db.DB
 import play.api.Play.current
 
-case class Video(id: Long, time: DateTime, video: String, picture: Option[String], flagged: Boolean, event: Long, cameraId: Long)
+case class Video(id: Long, time: DateTime, video: String, picture: Option[String], flagged: Boolean, event: Long, cameraId: Long, cameraDescription: String)
 
 trait VideoService {
   def getBetweenInterval(interval: Interval, flagged: Option[Boolean] = None): List[Video]
@@ -26,8 +26,9 @@ class ConcreteVideoService extends VideoService {
       get[Option[String]]("picture") ~
       bool("flagged") ~
       long("event") ~
-      long("cameraId") map {
-      case id ~ time ~ video ~ picture ~ flagged ~ event ~ cameraId => Video(id, new DateTime(time * 1000), video, picture, flagged, event, cameraId)
+      long("cameraId") ~
+      str("camera.description") map {
+      case id ~ time ~ video ~ picture ~ flagged ~ event ~ cameraId ~ cameraDescription => Video(id, new DateTime(time * 1000), video, picture, flagged, event, cameraId, cameraDescription)
     }
   }
 
@@ -35,19 +36,19 @@ class ConcreteVideoService extends VideoService {
 
   def all(): List[Video] = DB.withConnection {
     implicit c => {
-      SQL("select * from video order by time").as(videosParser)
+      SQL("select video.*,camera.description from video inner join camera on video.cameraId=camera.id order by time").as(videosParser)
     }
   }
 
   def getBetweenInterval(interval: Interval, flagged: Option[Boolean] = None): List[Video] = DB.withConnection {
     implicit c => {
       flagged match {
-        case Some(f) => SQL("select * from video where {start} <= time and time <= {end} and flagged = {flagged} order by time").on(
+        case Some(f) => SQL("select video.*,camera.description from video inner join camera on video.cameraId=camera.id where {start} <= time and time <= {end} and flagged = {flagged} order by time").on(
           'start -> interval.getStart,
           'end -> interval.getEnd,
           'flagged -> f
         ).as(videosParser)
-        case _ => SQL("select * from video where {start} <= time and time <= {end} order by time").on(
+        case _ => SQL("elect video.*,camera.description from video inner join camera on video.cameraId=camera.id where {start} <= time and time <= {end} order by time").on(
           'start -> interval.getStart,
           'end -> interval.getEnd
         ).as(videosParser)
