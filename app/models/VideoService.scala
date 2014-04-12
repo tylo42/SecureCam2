@@ -60,7 +60,7 @@ class ConcreteVideoService extends VideoService {
 
   def getMostRecentVideo(cameraId: Long): Option[Video] = DB.withConnection {
     implicit c => {
-      SQL("select video.*,camera.description from video inner join camera on video.cameraId=camera.id where cameraId = {cameraId} and picture is not null").on(
+      SQL("select video.*,camera.description from video inner join camera on video.cameraId=camera.id where video.id = (select max(id) from video where cameraId = {cameraId} and picture is not null)").on(
         'cameraId -> cameraId
       ).as(videosParser) match {
         case Nil => None
