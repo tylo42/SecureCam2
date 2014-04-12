@@ -5,6 +5,7 @@ import play.api.mvc.Controller
 import play.api.data.Form
 import play.api.data.Forms._
 import java.io.File
+import play.api.mvc.SimpleResult
 
 case class newCamera(port: Long, device: String, description: String)
 
@@ -23,16 +24,20 @@ class NodeController(_userService: UserService, nodeCamerasService: NodeCamerasS
   def node(id: Long) = isAuthenticated {
     implicit username => implicit request => {
       nodeCamerasService.nodeCameras(id) match {
-        case Some(nodeCameras) => Ok(views.html.node(nodeCameras, cameraForm, openDevices(id)))
+        case Some(nodeCameras) => Ok(views.html.node(nodeCameras, !openDevicesIsEmpty(id)))
         case _ => Redirect(routes.NodeCamerasController.cameras())
       }
     }
   }
 
-  def addCameraToNode(nodeId: Long) = isAdmin {
+  def newCameraToNode(nodeId: Long) = isAdmin {
     implicit username => implicit request =>
       cameraForm.bindFromRequest().fold(
-        errors => BadRequest(views.html.node(nodeCamerasService.nodeCameras(nodeId).get, errors, openDevices(nodeId))),
+        errors => {
+          addCameraToNodeImpl(nodeId)({ node: Node =>
+            BadRequest(views.html.addCameraToNode(node, errors, openDevices(nodeId)))
+          })
+        },
         value => {
           nodeCamerasService.addCameraToNode(value.port, new File(value.device), value.description, nodeId)
           MotionController.restartMotion()
@@ -41,11 +46,40 @@ class NodeController(_userService: UserService, nodeCamerasService: NodeCamerasS
       )
   }
 
+  def addCameraToNode(nodeId: Long) = isAdmin {
+    implicit username => implicit request => {
+      addCameraToNodeImpl(nodeId)({ node: Node =>
+        Ok(views.html.addCameraToNode(node, cameraForm, openDevices(nodeId)))
+      })
+    }
+  }
+
+  /**
+   * Redirects to node's page if no devices available. Redirects to node cameras page if node is not
+   * found. Otherwise uses happyPath's result
+   * @param nodeId The node to add the camera to
+   * @param happyPath The result if everything is consistent
+   * @return
+   */
+  private def addCameraToNodeImpl(nodeId: Long)(happyPath: (Node) => SimpleResult): SimpleResult = {
+    nodeCamerasService.nodeCameras(nodeId) match {
+      case Some(nodeCameras) =>
+        if(!openDevicesIsEmpty(nodeId)) {
+          happyPath(nodeCameras.node)
+        } else {
+          Redirect(routes.NodeController.node(nodeId))
+        }
+      case _ => Redirect(routes.NodeCamerasController.cameras())
+    }
+  }
+
   private def openDevices(id: Long): List[String] = new File("/dev").listFiles()
     .filter(_.getName.startsWith("video"))
     .filter(!nodeCamerasService.isDeviceUsedOnNode(id, _))
     .map(_.getAbsolutePath)
     .toList
+
+  private def openDevicesIsEmpty(id: Long): Boolean = openDevices(id).isEmpty
 
   override val userService = _userService
 }

@@ -25,7 +25,8 @@ GET     /nodeCameras                controllers.NodeCamerasController.cameras
 
 # Node
 GET     /node/:id                   controllers.NodeController.node(id: Long)
-POST    /node/:id                   controllers.NodeController.addCameraToNode(id: Long)
+POST    /node/:id/addCamera         controllers.NodeController.newCameraToNode(id: Long)
+GET     /node/:id/addCamera         controllers.NodeController.addCameraToNode(id: Long)
 
 # Camera
 GET     /cameras/:id                controllers.CameraController.camera(id: Long)

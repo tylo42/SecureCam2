@@ -1,0 +1,18 @@
+@(node: Node, cameraForm: Form[newCamera], devices: List[String])(implicit username: String)
+
+@import helper._
+
+@main("Add a new camera to " + node.hostname, Some(username)) {
+    <h1>Add a new camera to @node.hostname</h1>
+
+    @cameraForm.globalError.map { error =>
+        <dd class="error">@error.message</dd>
+    }
+
+    @form(routes.NodeController.newCameraToNode(node.id)) {
+        @inputText(cameraForm("Port"))
+        @select(cameraForm("Device"), options(devices))
+        @inputText(cameraForm("Description"))
+        <input type="submit" value="Create">
+    }
+}

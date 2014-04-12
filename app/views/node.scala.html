@@ -1,12 +1,10 @@
-@(nodeCameras: NodeCameras, cameraForm: Form[newCamera], devices: List[String])(implicit username: String)
+@(nodeCameras: NodeCameras, canAdd: Boolean)(implicit username: String)
 
 @import helper._
 
 @main("Computer node: " + nodeCameras.node.hostname, Some(username)) {
 
-    <p><a href="@routes.NodeCamerasController.cameras">Cameras</a> &gt; @nodeCameras.node.hostname</p>
-
-    <h1>Computer node: @nodeCameras.node.hostname</h1>
+    <h1><a href="@routes.NodeCamerasController.cameras">Cameras</a> &gt; @nodeCameras.node.hostname</h1>
 
     @if(nodeCameras.cameras.isEmpty) {
         <p>There are no cameras installed on this computer node</p>
@@ -18,17 +16,9 @@
         </ul>
     }
 
-    <h2>Add a new camera to @nodeCameras.node.hostname</h2>
-
-    @cameraForm.globalError.map { error =>
-        <dd class="error">@error.message</dd>
-    }
-
     @form(routes.NodeController.addCameraToNode(nodeCameras.node.id)) {
-        @inputText(cameraForm("Port"))
-        @select(cameraForm("Device"), options(devices))
-        @inputText(cameraForm("Description"))
-        <input type="submit" value="Create">
+        <span title=@if(!canAdd) { "No devevices available on this node" }>
+            <input type="submit" value="Add camera" @if(!canAdd) { disabled }>
+        </span>
     }
-
 }
