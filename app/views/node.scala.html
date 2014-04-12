@@ -2,9 +2,11 @@
 
 @import helper._
 
-@main("Camera @camera.id", Some(username)) {
+@main("Computer node: " + nodeCameras.node.hostname, Some(username)) {
 
-    <h1>@nodeCameras.node.hostname</h1>
+    <p><a href="@routes.NodeCamerasController.cameras">Cameras</a> &gt; @nodeCameras.node.hostname</p>
+
+    <h1>Computer node: @nodeCameras.node.hostname</h1>
 
     @if(nodeCameras.cameras.isEmpty) {
         <p>There are no cameras installed on this computer node</p>

@@ -4,14 +4,14 @@
 
 @main("Cameras", Some(username)) {
 
-<h1>@nodeCameras.size computer @if(nodeCameras.size == 1) { node } else { nodes }</h1>
+<h1>Camera management</h1>
 
 <dl>
     @nodeCameras.map { node =>
-    <dt><a href='@routes.NodeController.node(node.node.id)'>@node.node.hostname</a></dt>
-    @node.cameras.map { camera =>
-    <dd>@camera.description</dd>
-    }
+        <dt><a href='@routes.NodeController.node(node.node.id)'>@node.node.hostname</a></dt>
+        @node.cameras.map { camera =>
+            <dd><a href='@routes.CameraController.camera(camera.id)'>@camera.description</a></dd>
+        }
     }
 </dl>
 }

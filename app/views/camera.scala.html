@@ -4,13 +4,15 @@
 
 @main("Camera @camera.id", Some(username)) {
 
-<h1>@camera.description</h1>
+    <p><a href="@routes.NodeCamerasController.cameras">Cameras</a> &gt; <a href="@routes.NodeController.node(node.id)">@node.hostname</a> &gt; @camera.description</p>
 
-<p>@node.hostname:@camera.port</p>
-<p>@camera.device</p>
+    <h1>@camera.description</h1>
 
-@form(routes.CameraController.delete(camera.id)) {
-<input type="submit" value="Delete">
-}
+    <p>@node.hostname:@camera.port</p>
+    <p>@camera.device</p>
+
+    @form(routes.CameraController.delete(camera.id)) {
+        <input type="submit" value="Delete">
+    }
 
 }
