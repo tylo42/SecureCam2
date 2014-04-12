@@ -5,6 +5,8 @@ import play.api.data.Forms._
 import play.api.data.Form
 import play.Logger
 import models._
+import java.io.File
+import play.mvc.BodyParser.AnyContent
 
 case class VideoInsert(time: Long, video: String, event: Long, cameraId: Long)
 
@@ -34,7 +36,7 @@ class VideoController(_userService: UserService, videoService: VideoService) ext
         errors => BadRequest,
         value => {
           Logger.info("Adding video: " + value)
-          videoService.insertVideo(value.time, value.video, value.event, value.cameraId)
+          videoService.insertVideo(value.time, getRelativePath(value.video), value.event, value.cameraId)
           Ok
         }
       )
@@ -46,7 +48,7 @@ class VideoController(_userService: UserService, videoService: VideoService) ext
         errors => BadRequest,
         value => {
           Logger.info("Adding picture: " + value)
-          videoService.insertPicture(value.picture, value.event, value.cameraId)
+          videoService.insertPicture(getRelativePath(value.picture), value.event, value.cameraId)
           Ok
         }
       )
@@ -58,7 +60,24 @@ class VideoController(_userService: UserService, videoService: VideoService) ext
     }
   }
 
+  val AbsolutePath = """^(/|[a-zA-Z]:\\).*""".r
+
+  def assetAt(file: String) = isAdmin {
+    implicit username => implicit request => {
+      val fileToServe = new File(MotionController.videoDirectory, file)
+
+      if (fileToServe.exists) {
+        Ok.sendFile(fileToServe, inline = true)
+      } else {
+        Logger.error("Failed to find file: " + file)
+        NotFound
+      }
+    }
+  }
+
   override val userService = _userService
+
+  private def getRelativePath(path: String): String = MotionController.videoDirectory.toURI.relativize(new File(path).toURI).getPath
 }
 
 object VideoController extends VideoController(new ConcreteUserService(new ConcreteRoleService()), new ConcreteVideoService())

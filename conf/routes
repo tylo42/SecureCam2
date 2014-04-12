@@ -36,8 +36,7 @@ POST    /cameras/:id/delete         controllers.CameraController.delete(id: Long
 POST    /newVideo                   controllers.VideoController.newVideo
 POST    /newPicture                 controllers.VideoController.newPicture
 GET     /videos                     controllers.VideoController.allVideos
-
-GET     /secureCamVideo/*file       controllers.ExternalAssets.at(path="/", file)
+GET     /secureCamVideo/*file       controllers.VideoController.assetAt(file)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

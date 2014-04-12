@@ -17,9 +17,9 @@
                             <p class="alignRight">@video.time.toString("MMMM d, y h:m:s a")</p>
                         </div>
                         <div style="clear: both;"></div>
-                        <a href="@routes.ExternalAssets.at(video.video)">
+                        <a href="@routes.VideoController.assetAt(video.video)">
                             @video.picture match {
-                                case Some(p) => { <img class="picture" src="@routes.ExternalAssets.at(p)" /> }
+                                case Some(picture) => { <img class="picture" src="@routes.VideoController.assetAt(picture)" /> }
                                 case _ => { A picture for this video does not exist. }
                             }
                         </a>
