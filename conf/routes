@@ -36,5 +36,7 @@ POST    /newVideo                   controllers.VideoController.newVideo
 POST    /newPicture                 controllers.VideoController.newPicture
 GET     /videos                     controllers.VideoController.allVideos
 
+GET     /secureCamVideo/*file       controllers.ExternalAssets.at(path="/", file)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

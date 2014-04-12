@@ -34,11 +34,23 @@ body {
     color: green;
 }
 
+.alignLeft {
+    float: left;
+}
+
+.alignRight {
+    float: right;
+}
+
+
 #navigation {
     margin-left: auto;
     margin-right: auto;
     ul {
+        text-align: center;
         list-style-type: none;
+        padding: 0px;
+        margin: 0px;
         li {
             display: inline;
             margin: 0px 30px 0px 30px;
@@ -52,6 +64,26 @@ body {
             a:hover {
                 background: #000000;
             }
+        }
+    }
+}
+
+#videos {
+    img.picture {
+        max-width: 320px;
+        max-height: 240px;
+    }
+    table {
+        margin-left: auto;
+        margin-right: auto;
+        td {
+            div.title p {
+                text-decoration: underline;
+                padding: 0px;
+                margin: 0px;
+            }
+            vertical-align: top;
+            padding: 10px 15px 15px 15px;
         }
     }
 }

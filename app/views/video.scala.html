@@ -3,20 +3,35 @@
 @import helper._
 
 @main("Videos", Some(username)) {
+    <div id="videos">
+        <h1>Videos</h1>
 
-<h1>@videos.size @if(videos.size == 1) { video } else { videos }</h1>
-
-@videos.map { video =>
-<dl>
-    <dt>Video id: @video.id</dt>
-    <dd>Time: @video.time.toString("yyyy-MM-dd HH:mm:ss")</dd>
-    <dd>Video: @video.video</dd>
-    <dd>Picture: @video.picture</dd>
-    <dd>Flagged: @video.flagged</dd>
-    <dd>Event: @video.event</dd>
-    <dd>Camera id: @video.cameraId</dd>
-</dl>
-}
-
-
+        <table>
+        @for((video, index) <- videos.zipWithIndex) {
+            @if(index % 2 == 0) {
+                <tr>
+            }
+                    <td>
+                        <div class="title">
+                            <p class="alignLeft">Camera id: @video.cameraId</p>
+                            <p class="alignRight">@video.time.toString("MMMM d, y h:m:s a")</p>
+                        </div>
+                        <div style="clear: both;"></div>
+                        <a href="@routes.ExternalAssets.at(video.video)">
+                            @video.picture match {
+                                case Some(p) => { <img class="picture" src="@routes.ExternalAssets.at(p)" /> }
+                                case _ => { A picture for this video does not exist. }
+                            }
+                        </a>
+                    </td>
+            @if(index == videos.size - 1) {
+                    <td></td>
+                </tr>
+            }
+            @if(index % 2 == 1) {
+                </tr>
+            }
+        }
+        </table>
+    </div>
 }

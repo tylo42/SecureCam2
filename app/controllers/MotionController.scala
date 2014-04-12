@@ -100,6 +100,7 @@ class MotionController(nodeCamerasService: NodeCamerasService) extends Controlle
       "videodevice " + camera.device.getAbsolutePath + "\n" +
       "target_dir " + new File(videoDirectory, "camera" + camera.id) + "\n" +
       "webcam_port " + camera.port + "\n" +
+      "text_left " + camera.description + "\n" +
       "on_movie_start curl -X POST -d \"time=%s&video=%f&event=%v&cameraId=" + camera.id + "\" http://localhost:9000/newVideo\n" +
       "on_picture_save curl -X POST -d \"picture=%f&event=%v&cameraId=" + camera.id + "\" http://localhost:9000/newPicture\n")
     writer.close()
