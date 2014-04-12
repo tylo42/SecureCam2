@@ -4,25 +4,29 @@
 
 @main("Camera @camera.id", Some(username)) {
 
-<h1>@nodeCameras.node.hostname</h1>
+    <h1>@nodeCameras.node.hostname</h1>
 
-<ul>
-    @nodeCameras.cameras.map { camera =>
-    <li><a href='@routes.CameraController.camera(camera.id)'>@camera.description</a></li>
+    @if(nodeCameras.cameras.isEmpty) {
+        <p>There are no cameras installed on this computer node</p>
+    } else {
+        <ul>
+            @nodeCameras.cameras.map { camera =>
+                <li><a href='@routes.CameraController.camera(camera.id)'>@camera.description</a></li>
+            }
+        </ul>
     }
-</ul>
 
-<h2>Add a new camera to @nodeCameras.node.hostname</h2>
+    <h2>Add a new camera to @nodeCameras.node.hostname</h2>
 
-@cameraForm.globalError.map { error =>
-<dd class="error">@error.message</dd>
-}
+    @cameraForm.globalError.map { error =>
+        <dd class="error">@error.message</dd>
+    }
 
-@form(routes.NodeController.addCameraToNode(nodeCameras.node.id)) {
-@inputText(cameraForm("Port"))
-@select(cameraForm("Device"), options(devices))
-@inputText(cameraForm("Description"))
-<input type="submit" value="Create">
-}
+    @form(routes.NodeController.addCameraToNode(nodeCameras.node.id)) {
+        @inputText(cameraForm("Port"))
+        @select(cameraForm("Device"), options(devices))
+        @inputText(cameraForm("Description"))
+        <input type="submit" value="Create">
+    }
 
 }
