@@ -1,15 +1,18 @@
 package models
 
-import org.joda.time.{Interval, DateTime}
+import org.joda.time.{Seconds, Interval, DateTime}
 import anorm._
 import anorm.SqlParser._
 import play.api.db.DB
 import play.api.Play.current
+import play.Logger
 
 case class Video(id: Long, time: DateTime, video: String, picture: Option[String], flagged: Boolean, event: Long, cameraId: Long, cameraDescription: String)
 
 trait VideoService {
-  def getBetweenInterval(interval: Interval, flagged: Option[Boolean] = None): List[Video]
+  def getBetweenInterval(interval: Interval, flagged: Option[Boolean]): List[Video]
+
+  def getBetweenInterval(interval: Interval, cameraIds: List[Long], flagged: Option[Boolean]): List[Video]
 
   def getMostRecentVideo(cameraId: Long): Option[Video]
 
@@ -42,17 +45,37 @@ class ConcreteVideoService extends VideoService {
     }
   }
 
-  def getBetweenInterval(interval: Interval, flagged: Option[Boolean] = None): List[Video] = DB.withConnection {
+  private def toEpoch(dateTime: DateTime): Long = Seconds.secondsBetween(new DateTime(0), dateTime).getSeconds
+
+  def getBetweenInterval(interval: Interval, flagged: Option[Boolean]): List[Video] = DB.withConnection {
     implicit c => {
       flagged match {
         case Some(f) => SQL("select video.*,camera.description from video inner join camera on video.cameraId=camera.id where {start} <= time and time <= {end} and flagged = {flagged} order by time").on(
-          'start -> interval.getStart,
-          'end -> interval.getEnd,
+          'start -> toEpoch(interval.getStart),
+          'end -> toEpoch(interval.getEnd),
           'flagged -> f
         ).as(videosParser)
-        case _ => SQL("elect video.*,camera.description from video inner join camera on video.cameraId=camera.id where {start} <= time and time <= {end} order by time").on(
-          'start -> interval.getStart,
-          'end -> interval.getEnd
+        case _ => SQL("select video.*,camera.description from video inner join camera on video.cameraId=camera.id where {start} <= time and time <= {end} order by time").on(
+          'start -> toEpoch(interval.getStart),
+          'end -> toEpoch(interval.getEnd)
+        ).as(videosParser)
+      }
+    }
+  }
+
+  def getBetweenInterval(interval: Interval, cameraIds: List[Long], flagged: Option[Boolean]): List[Video] = DB.withConnection {
+    implicit c => {
+      flagged match {
+        case Some(f) => SQL("select video.*,camera.description from video inner join camera on video.cameraId=camera.id where {start} <= time and time <= {end} and cameraId in ({cameraIds}) and flagged = {flagged} order by time").on(
+          'start -> toEpoch(interval.getStart),
+          'end -> toEpoch(interval.getEnd),
+          'cameraIds -> cameraIds.mkString(","),
+          'flagged -> f
+        ).as(videosParser)
+        case _ => SQL("select video.*,camera.description from video inner join camera on video.cameraId=camera.id where {start} <= time and time <= {end} and cameraId in ({cameraIds}) order by time").on(
+          'start -> toEpoch(interval.getStart),
+          'end -> toEpoch(interval.getEnd),
+          'cameraIds -> cameraIds.mkString(",")
         ).as(videosParser)
       }
     }

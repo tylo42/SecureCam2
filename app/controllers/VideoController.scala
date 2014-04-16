@@ -7,6 +7,7 @@ import play.Logger
 import models._
 import java.io.File
 import play.mvc.BodyParser.AnyContent
+import org.joda.time.{Duration, Interval, Instant}
 
 case class VideoInsert(time: Long, video: String, event: Long, cameraId: Long)
 
@@ -56,7 +57,7 @@ class VideoController(_userService: UserService, videoService: VideoService) ext
 
   def allVideos() = isAdmin {
     implicit username => implicit request => {
-      Ok(views.html.video(videoService.all()))
+      Ok(views.html.video(videoService.getBetweenInterval(new Interval(Instant.now().minus(Duration.standardDays(1)), Instant.now()), None)))
     }
   }
 
